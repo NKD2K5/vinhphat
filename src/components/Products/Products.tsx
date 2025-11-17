@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ProductItem } from '@/data/mockData';
+import { ProductItem } from '@/types';
 
 interface ProductsProps {
   products: ProductItem[];

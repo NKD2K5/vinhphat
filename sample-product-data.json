@@ -1,0 +1,134 @@
+{
+  "products": [
+    {
+      "name": "In Catalogue Premium",
+      "slug": "in-catalogue-premium",
+      "price": "Từ 150.000đ",
+      "description": "Catalogue cao cấp với chất lượng in ấn tuyệt vời",
+      "gallery": [
+        {
+          "image": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=80"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&q=80"
+        }
+      ],
+      "specifications": {
+        "material": "Giấy couche cao cấp 150-250gsm",
+        "size": "A4 (210x297mm), A5 (148x210mm)",
+        "colors": "4 màu CMYK, Pantone",
+        "printing": "In offset chất lượng cao",
+        "quantity": "Từ 100 bản trở lên",
+        "finishing": "Cán màng bóng/mờ, đóng gáy xoắn/keo"
+      },
+      "detailedInfo": "Catalogue là công cụ marketing quan trọng giúp doanh nghiệp giới thiệu sản phẩm, dịch vụ một cách chuyên nghiệp và ấn tượng. Với thiết kế đẹp mắt và nội dung hấp dẫn, catalogue không chỉ cung cấp thông tin mà còn tạo dấu ấn thương hiệu mạnh mẽ trong tâm trí khách hàng.\n\nChúng tôi cung cấp dịch vụ in catalogue với chất lượng cao nhất, sử dụng công nghệ in offset hiện đại, giấy couche cao cấp và mực in nhập khẩu. Đội ngũ thiết kế chuyên nghiệp sẽ hỗ trợ bạn tạo ra catalogue hoàn hảo, phù hợp với định hướng thương hiệu.\n\nQuy trình in ấn được kiểm soát chặt chẽ từ khâu chuẩn bị file, hiệu chỉnh màu sắc, đến in ấn và gia công hoàn thiện. Mỗi catalogue được kiểm tra kỹ lưỡng trước khi giao đến tay khách hàng.",
+      "features": [
+        {
+          "feature": "Chất lượng in ấn sắc nét, màu sắc chuẩn xác"
+        },
+        {
+          "feature": "Giấy couche cao cấp, bền đẹp theo thời gian"
+        },
+        {
+          "feature": "Đa dạng kích thước và kiểu đóng gáy"
+        },
+        {
+          "feature": "Hỗ trợ thiết kế miễn phí cho đơn hàng lớn"
+        },
+        {
+          "feature": "Giao hàng nhanh chóng trên toàn quốc"
+        },
+        {
+          "feature": "Giá cả cạnh tranh, ưu đãi cho khách hàng thân thiết"
+        }
+      ]
+    },
+    {
+      "name": "In Brochure Gấp Đôi",
+      "slug": "in-brochure-gap-doi",
+      "price": "Từ 50.000đ",
+      "gallery": [
+        {
+          "image": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800&q=80"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1586281380614-7c1c7f9f0fcb?w=800&q=80"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1586281380117-5a60ae2050cc?w=800&q=80"
+        }
+      ],
+      "specifications": {
+        "material": "Giấy couche 150gsm, 200gsm",
+        "size": "A4 gấp đôi (210x297mm)",
+        "colors": "4 màu CMYK",
+        "printing": "In offset, in kỹ thuật số",
+        "quantity": "Từ 50 bản",
+        "finishing": "Cán màng, gấp đôi chuyên nghiệp"
+      },
+      "detailedInfo": "Brochure gấp đôi là giải pháp quảng cáo hiệu quả, phù hợp cho các sự kiện, hội chợ, triển lãm. Với thiết kế gấp đôi độc đáo, brochure tạo không gian trình bày thông tin rộng rãi hơn, giúp khách hàng dễ dàng tiếp cận nội dung.\n\nSản phẩm được in trên giấy couche cao cấp với công nghệ in offset hoặc in kỹ thuật số, đảm bảo màu sắc sống động, hình ảnh sắc nét. Quy trình gấp chuyên nghiệp tạo nếp gấp thẳng, đẹp, tăng tính thẩm mỹ cho sản phẩm.",
+      "features": [
+        {
+          "feature": "Thiết kế gấp đôi độc đáo, thu hút"
+        },
+        {
+          "feature": "In màu sắc sống động, hình ảnh sắc nét"
+        },
+        {
+          "feature": "Giấy couche cao cấp, cán màng bóng/mờ"
+        },
+        {
+          "feature": "Gấp chuyên nghiệp, nếp gấp thẳng đẹp"
+        },
+        {
+          "feature": "Phù hợp cho sự kiện, hội chợ, triển lãm"
+        }
+      ]
+    },
+    {
+      "name": "In Name Card Cao Cấp",
+      "slug": "in-name-card-cao-cap",
+      "price": "Từ 100.000đ/100 cái",
+      "gallery": [
+        {
+          "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&q=80"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&q=80"
+        },
+        {
+          "image": "https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?w=800&q=80"
+        }
+      ],
+      "specifications": {
+        "material": "Giấy couche 300gsm, giấy mỹ thuật",
+        "size": "9x5cm (90x54mm)",
+        "colors": "4 màu CMYK, Pantone",
+        "printing": "In offset, in kỹ thuật số",
+        "quantity": "Từ 100 cái",
+        "finishing": "Cán màng, bo góc, ép kim, ép nhiệt"
+      },
+      "detailedInfo": "Name card (danh thiếp) là công cụ networking không thể thiếu trong kinh doanh. Một tấm name card đẹp, chuyên nghiệp sẽ tạo ấn tượng tốt và giúp bạn ghi điểm trong mắt đối tác, khách hàng.\n\nChúng tôi cung cấp đa dạng loại giấy cao cấp: giấy couche, giấy mỹ thuật, giấy kraft, giấy nhũ... Kết hợp với các kỹ thuật gia công hiện đại như ép kim, ép nhiệt, cán màng, bo góc để tạo nên những tấm name card độc đáo, khẳng định đẳng cấp.",
+      "features": [
+        {
+          "feature": "Đa dạng chất liệu giấy cao cấp"
+        },
+        {
+          "feature": "Kỹ thuật gia công hiện đại (ép kim, ép nhiệt)"
+        },
+        {
+          "feature": "Thiết kế chuyên nghiệp, độc đáo"
+        },
+        {
+          "feature": "In màu sắc chuẩn, sắc nét"
+        },
+        {
+          "feature": "Giao hàng nhanh, số lượng linh hoạt"
+        }
+      ]
+    }
+  ]
+}

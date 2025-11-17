@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { NewsItem } from '@/data/mockData';
+import { NewsItem } from '@/types';
 
 interface NewsProps {
   news: NewsItem[];

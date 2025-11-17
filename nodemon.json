@@ -1,0 +1,16 @@
+{
+  "watch": [
+    "server.js",
+    "src/payload/**/*"
+  ],
+  "ext": "js,ts,json",
+  "ignore": [
+    "node_modules/**/*",
+    ".next/**/*",
+    "dist/**/*"
+  ],
+  "exec": "node server.js",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

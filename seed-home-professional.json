@@ -1,0 +1,334 @@
+{
+  "title": "Trang Chủ - VinhPhat Printing",
+  "seo": {
+    "metaTitle": "VinhPhat Printing - Giải Pháp In Ấn Chuyên Nghiệp Hàng Đầu Việt Nam",
+    "metaDescription": "VinhPhat Printing với 15+ năm kinh nghiệm, chuyên cung cấp dịch vụ in ấn chất lượng cao: In Offset, In Kỹ Thuật Số, In Bao Bì, Catalogue. Công nghệ hiện đại, giá cạnh tranh, giao hàng nhanh toàn quốc.",
+    "metaKeywords": "in ấn chuyên nghiệp, in offset, in kỹ thuật số, in bao bì cao cấp, in catalogue, in brochure, in tờ rơi, in card visit, VinhPhat Printing, in ấn TP.HCM"
+  },
+  "layout": [
+    {
+      "blockType": "hero",
+      "slides": [
+        {
+          "headline": [
+            {
+              "children": [
+                { "text": "Giải Pháp In Ấn " },
+                { "text": "Chuyên Nghiệp", "bold": true }
+              ]
+            }
+          ],
+          "subheadline": [
+            {
+              "children": [
+                { "text": "Công nghệ hiện đại - Chất lượng vượt trội - Giá cạnh tranh" }
+              ]
+            }
+          ],
+          "description": [
+            {
+              "children": [
+                { "text": "VinhPhat Printing tự hào là đơn vị tiên phong trong lĩnh vực in ấn với hơn 15 năm kinh nghiệm. Chúng tôi cam kết mang đến sản phẩm chất lượng cao nhất, đáp ứng mọi nhu cầu in ấn của doanh nghiệp và cá nhân." }
+              ]
+            }
+          ],
+          "primaryCTA": {
+            "text": "Khám Phá Dịch Vụ",
+            "link": "/dich-vu"
+          },
+          "secondaryCTA": {
+            "text": "Liên Hệ Tư Vấn",
+            "link": "/lien-he"
+          },
+          "backgroundColor": "#1e40af"
+        },
+        {
+          "headline": [
+            {
+              "children": [
+                { "text": "In Offset " },
+                { "text": "Chất Lượng Cao", "bold": true }
+              ]
+            }
+          ],
+          "subheadline": [
+            {
+              "children": [
+                { "text": "Máy móc nhập khẩu Đức - Màu sắc chuẩn xác - Độ sắc nét hoàn hảo" }
+              ]
+            }
+          ],
+          "description": [
+            {
+              "children": [
+                { "text": "Hệ thống máy in offset Heidelberg hiện đại, công nghệ in 4 màu và 6 màu, đảm bảo chất lượng in ấn sắc nét, màu sắc chuẩn xác. Phù hợp cho in số lượng lớn: catalogue, brochure, bao bì, tờ rơi." }
+              ]
+            }
+          ],
+          "primaryCTA": {
+            "text": "Tìm Hiểu Thêm",
+            "link": "/dich-vu/in-offset"
+          },
+          "secondaryCTA": {
+            "text": "Nhận Báo Giá",
+            "link": "/bao-gia"
+          },
+          "backgroundColor": "#059669"
+        },
+        {
+          "headline": [
+            {
+              "children": [
+                { "text": "In Bao Bì " },
+                { "text": "Cao Cấp", "bold": true }
+              ]
+            }
+          ],
+          "subheadline": [
+            {
+              "children": [
+                { "text": "Thiết kế độc đáo - In ấn tinh tế - Nâng tầm thương hiệu" }
+              ]
+            }
+          ],
+          "description": [
+            {
+              "children": [
+                { "text": "Chuyên thiết kế và in bao bì các loại: hộp giấy cao cấp, túi giấy kraft, nhãn mác sản phẩm, tem decal. Đa dạng kỹ thuật gia công: cán màng, ép kim, ép nhiệt, UV spot." }
+              ]
+            }
+          ],
+          "primaryCTA": {
+            "text": "Xem Mẫu Bao Bì",
+            "link": "/san-pham?category=bao-bi"
+          },
+          "secondaryCTA": {
+            "text": "Tư Vấn Miễn Phí",
+            "link": "/lien-he"
+          },
+          "backgroundColor": "#7c3aed"
+        }
+      ],
+      "stats": [
+        {
+          "value": "15+",
+          "label": "Năm Kinh Nghiệm",
+          "icon": "🏆"
+        },
+        {
+          "value": "5000+",
+          "label": "Khách Hàng Tin Dùng",
+          "icon": "👥"
+        },
+        {
+          "value": "10000+",
+          "label": "Dự Án Hoàn Thành",
+          "icon": "✅"
+        },
+        {
+          "value": "99%",
+          "label": "Khách Hàng Hài Lòng",
+          "icon": "⭐"
+        }
+      ]
+    },
+    {
+      "blockType": "aboutBlock",
+      "title": "VinhPhat Printing - Đối Tác In Ấn Đáng Tin Cậy",
+      "subtitle": "Hơn 15 năm đồng hành cùng doanh nghiệp Việt",
+      "description": [
+        {
+          "children": [
+            { "text": "VinhPhat Printing", "bold": true },
+            { "text": " tự hào là một trong những đơn vị hàng đầu trong lĩnh vực in ấn tại Việt Nam. Với đội ngũ chuyên gia giàu kinh nghiệm, trang thiết bị máy móc hiện đại nhập khẩu từ Đức và Nhật Bản, cùng quy trình sản xuất khép kín theo tiêu chuẩn quốc tế, chúng tôi cam kết mang đến cho khách hàng những sản phẩm in ấn chất lượng cao nhất." }
+          ]
+        },
+        {
+          "children": [
+            { "text": "\n\nChúng tôi chuyên cung cấp đa dạng dịch vụ: " },
+            { "text": "In Offset chất lượng cao", "bold": true },
+            { "text": " cho số lượng lớn, " },
+            { "text": "In Kỹ Thuật Số", "bold": true },
+            { "text": " nhanh chóng cho số lượng ít, " },
+            { "text": "In Bao Bì Cao Cấp", "bold": true },
+            { "text": " với nhiều kỹ thuật gia công đặc biệt, cùng các sản phẩm in ấn khác như Catalogue, Brochure, Tờ Rơi, Card Visit, Tem Nhãn..." }
+          ]
+        },
+        {
+          "children": [
+            { "text": "\n\nVới phương châm " },
+            { "text": "\"Chất lượng là danh dự\"", "italic": true },
+            { "text": ", VinhPhat Printing luôn đặt sự hài lòng của khách hàng lên hàng đầu. Chúng tôi không ngừng đầu tư công nghệ, nâng cao chất lượng dịch vụ để xứng đáng là đối tác tin cậy của mọi doanh nghiệp." }
+          ]
+        }
+      ],
+      "features": [
+        {
+          "icon": "✓",
+          "title": "Chất Lượng Đảm Bảo",
+          "description": "Kiểm tra kỹ lưỡng 100% sản phẩm trước khi giao hàng. Cam kết đổi trả nếu không đạt yêu cầu."
+        },
+        {
+          "icon": "💰",
+          "title": "Giá Cạnh Tranh Nhất",
+          "description": "Báo giá minh bạch, không phát sinh chi phí. Nhiều chương trình ưu đãi hấp dẫn."
+        },
+        {
+          "icon": "🚚",
+          "title": "Giao Hàng Nhanh Chóng",
+          "description": "Cam kết đúng tiến độ, giao hàng toàn quốc. Hỗ trợ giao hàng gấp trong 24h."
+        },
+        {
+          "icon": "💬",
+          "title": "Hỗ Trợ Tận Tâm 24/7",
+          "description": "Đội ngũ tư vấn chuyên nghiệp, nhiệt tình, sẵn sàng hỗ trợ mọi lúc mọi nơi."
+        }
+      ],
+      "primaryButton": {
+        "text": "Về Chúng Tôi",
+        "link": "/gioi-thieu"
+      },
+      "secondaryButton": {
+        "text": "Liên Hệ Ngay",
+        "link": "/lien-he"
+      }
+    },
+    {
+      "blockType": "services",
+      "title": "Dịch Vụ In Ấn Chuyên Nghiệp",
+      "description": "Giải pháp in ấn toàn diện với công nghệ hiện đại nhất",
+      "services": [
+        {
+          "icon": "🖨️",
+          "title": "In Offset Chất Lượng Cao",
+          "description": "In offset số lượng lớn với màu sắc chuẩn xác, độ sắc nét cao. Máy móc Heidelberg nhập khẩu Đức. Phù hợp cho catalogue, brochure, tờ rơi, bao bì. Giá tốt nhất thị trường cho số lượng từ 500 bản trở lên."
+        },
+        {
+          "icon": "💻",
+          "title": "In Kỹ Thuật Số",
+          "description": "In nhanh, in số lượng ít với công nghệ kỹ thuật số hiện đại. Thời gian nhanh chóng, chất lượng đảm bảo. Phù hợp cho in thử mẫu, in số lượng nhỏ từ 1-500 bản. Hỗ trợ in gấp trong ngày."
+        },
+        {
+          "icon": "📦",
+          "title": "In Bao Bì Cao Cấp",
+          "description": "Thiết kế và in bao bì: hộp giấy cao cấp, túi giấy kraft, nhãn mác sản phẩm, tem decal. Đa dạng kỹ thuật gia công: cán màng bóng/mờ, ép kim, ép nhiệt, UV spot. Nâng tầm thương hiệu của bạn."
+        },
+        {
+          "icon": "📚",
+          "title": "In Catalogue - Brochure",
+          "description": "In catalogue, brochure, tạp chí chuyên nghiệp với nhiều kỹ thuật gia công: bế, cán, ép kim, gấp. Đa dạng khổ giấy và chất liệu. Đóng gáy keo nhiệt, đóng gáy xoắn, đóng gáy ốc. Màu sắc sống động, chi tiết sắc nét."
+        },
+        {
+          "icon": "📄",
+          "title": "In Tờ Rơi - Flyer",
+          "description": "In tờ rơi quảng cáo với giá tốt nhất. Giao hàng nhanh, phù hợp cho các chiến dịch marketing. Đa dạng khổ giấy: A4, A5, A6. Chất liệu: couche, ivory, giấy ảnh. Hỗ trợ thiết kế miễn phí."
+        },
+        {
+          "icon": "💳",
+          "title": "In Card Visit - Danh Thiếp",
+          "description": "In card visit cao cấp với nhiều chất liệu: giấy mỹ thuật, nhựa PVC, kim loại. Kỹ thuật gia công đặc biệt: ép kim, ép nhiệt, cán màng, bo góc tròn. Tạo ấn tượng chuyên nghiệp ngay từ lần gặp đầu tiên."
+        }
+      ],
+      "ctaText": "Xem Tất Cả Dịch Vụ",
+      "ctaLink": "/dich-vu"
+    },
+    {
+      "blockType": "workflow",
+      "title": "Quy Trình Làm Việc Chuyên Nghiệp",
+      "subtitle": "Đơn giản - Nhanh chóng - Hiệu quả - Minh bạch",
+      "steps": [
+        {
+          "stepNumber": 1,
+          "title": "Tiếp Nhận Yêu Cầu",
+          "description": "Khách hàng liên hệ qua hotline, email hoặc trực tiếp tại văn phòng. Cung cấp thông tin về sản phẩm cần in: loại sản phẩm, số lượng, kích thước, chất liệu."
+        },
+        {
+          "stepNumber": 2,
+          "title": "Tư Vấn & Báo Giá",
+          "description": "Đội ngũ tư vấn chuyên nghiệp sẽ hỗ trợ lựa chọn giải pháp tối ưu. Gửi báo giá chi tiết, minh bạch trong vòng 30 phút. Giải đáp mọi thắc mắc của khách hàng."
+        },
+        {
+          "stepNumber": 3,
+          "title": "Thiết Kế & Duyệt Mẫu",
+          "description": "Thiết kế file in theo yêu cầu hoặc nhận file từ khách hàng. Kiểm tra và tối ưu file in. Gửi mẫu để khách hàng xác nhận trước khi sản xuất."
+        },
+        {
+          "stepNumber": 4,
+          "title": "Sản Xuất",
+          "description": "Sau khi khách hàng xác nhận mẫu và thanh toán đặt cọc, chúng tôi tiến hành sản xuất. Quy trình sản xuất được giám sát chặt chẽ, đảm bảo chất lượng và tiến độ."
+        },
+        {
+          "stepNumber": 5,
+          "title": "Kiểm Tra Chất Lượng",
+          "description": "Kiểm tra kỹ lưỡng 100% sản phẩm trước khi giao hàng. Đảm bảo màu sắc, kích thước, chất lượng in ấn đạt yêu cầu. Đóng gói cẩn thận, bảo vệ sản phẩm tối đa."
+        },
+        {
+          "stepNumber": 6,
+          "title": "Giao Hàng & Hỗ Trợ",
+          "description": "Giao hàng đúng hẹn, đúng địa điểm. Hỗ trợ vận chuyển toàn quốc. Chăm sóc khách hàng sau bán hàng, giải quyết mọi vấn đề phát sinh nhanh chóng."
+        }
+      ]
+    },
+    {
+      "blockType": "whyChooseUs",
+      "title": "Tại Sao Chọn VinhPhat Printing?",
+      "subtitle": "8 lý do khách hàng tin tưởng và lựa chọn chúng tôi",
+      "reasons": [
+        {
+          "icon": "🏆",
+          "title": "15+ Năm Kinh Nghiệm",
+          "description": "Đội ngũ chuyên gia giàu kinh nghiệm trong ngành in ấn. Am hiểu sâu sắc về công nghệ và xu hướng in ấn hiện đại. Đã phục vụ hàng nghìn doanh nghiệp lớn nhỏ."
+        },
+        {
+          "icon": "⚙️",
+          "title": "Công Nghệ Hiện Đại",
+          "description": "Máy móc nhập khẩu từ Đức, Nhật Bản. Công nghệ in offset, in kỹ thuật số và in UV tiên tiến nhất. Đảm bảo chất lượng in ấn hoàn hảo."
+        },
+        {
+          "icon": "✅",
+          "title": "Cam Kết Chất Lượng 100%",
+          "description": "Kiểm tra kỹ lưỡng từng sản phẩm. Đổi trả miễn phí nếu sản phẩm không đạt yêu cầu. Bảo hành dài hạn cho mọi sản phẩm."
+        },
+        {
+          "icon": "💰",
+          "title": "Giá Cạnh Tranh Nhất",
+          "description": "Báo giá minh bạch, cạnh tranh nhất thị trường. Nhiều chương trình khuyến mãi hấp dẫn. Hỗ trợ giảm giá cho đơn hàng số lượng lớn."
+        },
+        {
+          "icon": "🚚",
+          "title": "Giao Hàng Toàn Quốc",
+          "description": "Vận chuyển nhanh chóng, an toàn đến tay khách hàng. Giao hàng toàn quốc trong 2-3 ngày. Hỗ trợ giao hàng gấp trong 24h."
+        },
+        {
+          "icon": "💬",
+          "title": "Hỗ Trợ Tận Tâm 24/7",
+          "description": "Đội ngũ tư vấn chuyên nghiệp, nhiệt tình. Sẵn sàng hỗ trợ khách hàng mọi lúc mọi nơi. Giải đáp mọi thắc mắc nhanh chóng."
+        },
+        {
+          "icon": "🎨",
+          "title": "Thiết Kế Miễn Phí",
+          "description": "Đội ngũ designer sáng tạo, chuyên nghiệp. Hỗ trợ thiết kế miễn phí cho mọi đơn hàng. Tư vấn về màu sắc, bố cục, chất liệu phù hợp."
+        },
+        {
+          "icon": "📞",
+          "title": "Tư Vấn Chuyên Nghiệp",
+          "description": "Tư vấn miễn phí về thiết kế, chất liệu, kỹ thuật in ấn. Hỗ trợ khách hàng lựa chọn giải pháp tối ưu nhất. Báo giá nhanh chóng, minh bạch."
+        }
+      ]
+    },
+    {
+      "blockType": "cta",
+      "title": "Bạn Cần Tư Vấn In Ấn?",
+      "description": "Liên hệ ngay với chúng tôi để nhận báo giá tốt nhất và tư vấn miễn phí!",
+      "primaryButton": {
+        "text": "Nhận Báo Giá Ngay",
+        "link": "/bao-gia"
+      },
+      "secondaryButton": {
+        "text": "Gọi Hotline: 0123 456 789",
+        "link": "tel:0123456789"
+      },
+      "backgroundColor": "#1e40af"
+    }
+  ]
+}

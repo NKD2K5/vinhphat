@@ -1,0 +1,86 @@
+const {
+  HeroBlock,
+  AboutBlock,
+  ServicesBlock,
+  FeaturedProductsBlock,
+  WorkflowBlock,
+  TestimonialsBlock,
+  LatestNewsBlock,
+  WhyChooseUsBlock,
+  CTABlock,
+} = require('../blocks');
+const ImageUploadField = require('../../components/ImageUploadField');
+
+exports.Home = {
+  slug: 'home-page',
+  label: 'Trang Chủ',
+  admin: {
+    group: 'Toàn thể (globals)',
+  },
+  access: {
+    read: () => true,
+    update: () => true,
+  },
+  fields: [
+    {
+      name: 'title',
+      type: 'text',
+      label: 'Tiêu đề trang',
+      required: true,
+      defaultValue: 'Trang Chủ - VinhPhat Printing',
+    },
+    // SEO Fields
+    {
+      name: 'seo',
+      type: 'group',
+      label: 'SEO',
+      fields: [
+        {
+          name: 'metaTitle',
+          type: 'text',
+          label: 'Meta Title',
+          maxLength: 60,
+        },
+        {
+          name: 'metaDescription',
+          type: 'textarea',
+          label: 'Meta Description',
+          maxLength: 160,
+        },
+        {
+          name: 'metaKeywords',
+          type: 'text',
+          label: 'Meta Keywords',
+        },
+        {
+          name: 'ogImage',
+          type: 'text',
+          label: 'OG Image (URL)',
+          admin: {
+            components: {
+              Field: ImageUploadField,
+            },
+            description: 'Upload ảnh qua C# API',
+          },
+        },
+      ],
+    },  
+    // Layout Blocks
+    {
+      name: 'layout',
+      type: 'blocks',
+      label: 'Nội dung trang',
+      blocks: [
+        HeroBlock,
+        AboutBlock,
+        ServicesBlock,
+        FeaturedProductsBlock,
+        WorkflowBlock,
+        TestimonialsBlock,
+        LatestNewsBlock,
+        WhyChooseUsBlock,
+        CTABlock,
+      ],
+    },
+  ],
+};

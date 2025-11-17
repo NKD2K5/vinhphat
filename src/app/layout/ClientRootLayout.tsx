@@ -4,14 +4,11 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import ClientLayout from "./ClientLayout";
 import { ThemeProvider } from 'next-themes';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 
-// Dynamically import to avoid SSR issues
-const FloatingContactIcons = dynamic(
-  () => import('@/components/FloatingContactIcons/FloatingContactIcons'),
-  { ssr: false }
-);
+// Import FloatingButtons
+import FloatingButtons from '@/components/FloatingButtons';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,53 +16,79 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-// Function to remove bis_skin_checked attribute
-const removeBisSkin = () => {
-  try {
-    // Remove from document element and body
-    [document.documentElement, document.body].forEach(el => {
-      if (el?.hasAttribute('bis_skin_checked')) {
-        el.removeAttribute('bis_skin_checked');
-      }
-    });
-
-    // Remove from all elements
-    const elements = document.querySelectorAll('[bis_skin_checked]');
-    elements.forEach(el => el.removeAttribute('bis_skin_checked'));
-  } catch (e) {
-    console.warn('Error removing bis_skin_checked:', e);
-  }
-};
-
 export default function ClientRootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Client-side effect to remove bis_skin_checked
+  const [mounted, setMounted] = useState(false);
+
+  // Only run on client side
   useEffect(() => {
+    setMounted(true);
+    
+    // Function to remove bis_skin_checked attribute
+    const removeBisSkin = () => {
+      try {
+        // Remove from document element and body
+        [document.documentElement, document.body].forEach(el => {
+          if (el?.hasAttribute('bis_skin_checked')) {
+            el.removeAttribute('bis_skin_checked');
+          }
+        });
+
+        // Remove from all elements
+        const elements = document.querySelectorAll('[bis_skin_checked]');
+        elements.forEach(el => el.removeAttribute('bis_skin_checked'));
+      } catch (e) {
+        console.warn('Error removing bis_skin_checked:', e);
+      }
+    };
+    
     // Run immediately
     removeBisSkin();
     
-    // Run after a short delay to catch any late additions
-    const timeouts = [10, 50, 100, 200, 500, 1000].map(timeout => 
-      setTimeout(removeBisSkin, timeout)
-    );
+    // MutationObserver to handle dynamically added elements
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+          removeBisSkin();
+        }
+      });
+    });
+    
+    // Start observing the document with the configured parameters
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['bis_skin_checked']
+    });
     
     // Cleanup function
     return () => {
-      timeouts.forEach(clearTimeout);
+      observer.disconnect();
     };
   }, []);
+  
+  // Don't render anything until we're on the client side
+  if (!mounted) {
+    return (
+      <html lang="vi" suppressHydrationWarning>
+        <body className={`${inter.variable} font-sans`} suppressHydrationWarning />
+      </html>
+    );
+  }
+
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans`}>
+      <body className={`${inter.variable} font-sans`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ClientLayout>
-            <main className="flex-grow">
+            <main className="flex-grow" suppressHydrationWarning>
               {children}
             </main>
-            <FloatingContactIcons />
+            <FloatingButtons />
           </ClientLayout>
         </ThemeProvider>
       </body>

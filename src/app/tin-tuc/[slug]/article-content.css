@@ -1,0 +1,208 @@
+/* Article Content Styles - CKEditor HTML */
+
+.article-content {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+/* Images in content */
+.article-content img {
+  @apply max-w-full h-auto rounded-lg my-6;
+  display: block;
+}
+
+/* CKEditor image alignment classes */
+.article-content .image-style-align-left,
+.article-content figure.image-style-align-left {
+  float: left;
+  margin-right: 1.5rem;
+  margin-left: 0;
+  max-width: 50%;
+}
+
+.article-content .image-style-align-right,
+.article-content figure.image-style-align-right {
+  float: right;
+  margin-left: 1.5rem;
+  margin-right: 0;
+  max-width: 50%;
+}
+
+.article-content .image-style-align-center,
+.article-content figure.image-style-align-center {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  text-align: center;
+}
+
+.article-content .image-style-side,
+.article-content figure.image-style-side {
+  float: right;
+  margin-left: 1.5rem;
+  max-width: 50%;
+}
+
+.article-content .image-style-block-align-left,
+.article-content figure.image-style-block-align-left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.article-content .image-style-block-align-right,
+.article-content figure.image-style-block-align-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.article-content .image-inline,
+.article-content figure.image-inline {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.article-content figure {
+  @apply my-6;
+}
+
+.article-content figure img {
+  @apply rounded-lg;
+  width: 100%;
+  height: auto;
+}
+
+.article-content figure figcaption {
+  @apply text-sm text-gray-600 dark:text-gray-400 mt-2 text-center italic;
+}
+
+/* Custom width styles for images */
+.article-content .image-style-25,
+.article-content figure.image-style-25 {
+  max-width: 25%;
+  width: 25%;
+}
+
+.article-content .image-style-50,
+.article-content figure.image-style-50 {
+  max-width: 50%;
+  width: 50%;
+}
+
+.article-content .image-style-75,
+.article-content figure.image-style-75 {
+  max-width: 75%;
+  width: 75%;
+}
+
+.article-content .image-style-100,
+.article-content figure.image-style-100 {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Clear floats after images */
+.article-content::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Headings */
+.article-content h1 {
+  @apply text-4xl font-bold text-gray-900 dark:text-white mt-8 mb-4;
+}
+
+.article-content h2 {
+  @apply text-3xl font-bold text-gray-900 dark:text-white mt-8 mb-4;
+}
+
+.article-content h3 {
+  @apply text-2xl font-bold text-gray-900 dark:text-white mt-6 mb-3;
+}
+
+.article-content h4 {
+  @apply text-xl font-bold text-gray-900 dark:text-white mt-6 mb-3;
+}
+
+.article-content h5 {
+  @apply text-lg font-bold text-gray-900 dark:text-white mt-4 mb-2;
+}
+
+.article-content h6 {
+  @apply text-base font-bold text-gray-900 dark:text-white mt-4 mb-2;
+}
+
+/* Paragraphs */
+.article-content p {
+  @apply mb-4 leading-relaxed;
+}
+
+/* Links */
+.article-content a {
+  @apply text-blue-600 dark:text-blue-400 hover:underline;
+}
+
+/* Lists */
+.article-content ul {
+  @apply list-disc list-inside mb-4 space-y-2;
+}
+
+.article-content ol {
+  @apply list-decimal list-inside mb-4 space-y-2;
+}
+
+.article-content li {
+  @apply ml-4;
+}
+
+/* Blockquotes */
+.article-content blockquote {
+  @apply border-l-4 border-blue-600 pl-4 italic my-6 text-gray-600 dark:text-gray-400;
+}
+
+/* Tables */
+.article-content table {
+  @apply w-full border-collapse my-6;
+}
+
+.article-content th {
+  @apply bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 px-4 py-2 text-left font-bold;
+}
+
+.article-content td {
+  @apply border border-gray-300 dark:border-gray-700 px-4 py-2;
+}
+
+/* Code */
+.article-content code {
+  @apply bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono;
+}
+
+.article-content pre {
+  @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto my-4;
+}
+
+.article-content pre code {
+  @apply bg-transparent p-0;
+}
+
+/* Strong and emphasis */
+.article-content strong {
+  @apply font-bold;
+}
+
+.article-content em {
+  @apply italic;
+}
+
+.article-content u {
+  @apply underline;
+}
+
+.article-content s {
+  @apply line-through;
+}
+
+/* Horizontal rule */
+.article-content hr {
+  @apply my-8 border-gray-300 dark:border-gray-700;
+}

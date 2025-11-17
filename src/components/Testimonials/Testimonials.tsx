@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReviewItem } from '@/data/mockData';
+import { ReviewItem } from '@/types';
 
 interface TestimonialsProps {
   reviews: ReviewItem[];

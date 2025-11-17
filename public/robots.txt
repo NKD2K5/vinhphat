@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and API routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+
+# Allow important pages
+Allow: /
+Allow: /san-pham
+Allow: /dich-vu
+Allow: /tin-tuc
+Allow: /lien-he
+Allow: /gioi-thieu
+
+# Sitemap location
+Sitemap: https://vinhphat-printing.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
