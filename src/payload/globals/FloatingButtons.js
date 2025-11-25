@@ -16,19 +16,6 @@ const FloatingButtons = {
       },
     },
     {
-      name: 'position',
-      type: 'select',
-      label: 'Vị trí hiển thị',
-      options: [
-        { label: 'Góc trái', value: 'left' },
-        { label: 'Góc phải', value: 'right' },
-      ],
-      defaultValue: 'left',
-      admin: {
-        description: 'Chọn vị trí hiển thị các nút liên hệ',
-      },
-    },
-    {
       name: 'buttons',
       type: 'array',
       label: 'Danh sách nút liên hệ',
@@ -96,7 +83,7 @@ const FloatingButtons = {
         {
           type: 'messenger',
           label: 'Messenger',
-          url: 'https://m.me/vinhphatprinting',
+          url: 'https://www.facebook.com/people/In-Vinh-Ph%C3%A1t/61575271242570/',
           backgroundColor: '#0084FF',
           enabled: true,
         },
@@ -113,44 +100,6 @@ const FloatingButtons = {
           url: 'mailto:invinhphat6868@gmail.com',
           backgroundColor: '#EA4335',
           enabled: true,
-        },
-      ],
-    },
-    {
-      name: 'styling',
-      type: 'group',
-      label: 'Tùy chỉnh giao diện',
-      fields: [
-        {
-          name: 'buttonSize',
-          type: 'select',
-          label: 'Kích thước nút',
-          options: [
-            { label: 'Nhỏ (40px)', value: 'small' },
-            { label: 'Vừa (48px)', value: 'medium' },
-            { label: 'Lớn (56px)', value: 'large' },
-          ],
-          defaultValue: 'medium',
-        },
-        {
-          name: 'spacing',
-          type: 'select',
-          label: 'Khoảng cách giữa các nút',
-          options: [
-            { label: 'Gần (8px)', value: 'tight' },
-            { label: 'Vừa (12px)', value: 'normal' },
-            { label: 'Rộng (16px)', value: 'loose' },
-          ],
-          defaultValue: 'normal',
-        },
-        {
-          name: 'showTooltip',
-          type: 'checkbox',
-          label: 'Hiển thị tooltip',
-          defaultValue: true,
-          admin: {
-            description: 'Hiển thị nhãn khi hover vào nút',
-          },
         },
       ],
     },

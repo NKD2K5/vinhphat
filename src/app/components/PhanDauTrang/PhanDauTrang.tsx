@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -7,6 +7,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { FaSearch } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
 import { useNavigation } from '@/hooks/useNavigation';
+import Logo from '@/components/Logo/Logo';
 
 // Dynamically import ThemeToggle to avoid SSR issues with proper loading state
 const ChuyenDoiGiaoDien = dynamic(
@@ -75,9 +76,7 @@ const PhanDauTrang = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center gap-4">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white whitespace-nowrap">
-            VinhPhat<span className="text-blue-600">Printing</span>
-          </Link>
+          <Logo className="whitespace-nowrap" />
 
           {/* Search Bar */}
           <div className="hidden md:block flex-1 max-w-md">

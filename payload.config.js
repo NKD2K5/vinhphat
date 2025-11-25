@@ -3,12 +3,63 @@ const { webpackBundler } = require('@payloadcms/bundler-webpack');
 const { mongooseAdapter } = require('@payloadcms/db-mongodb');
 const { slateEditor } = require('@payloadcms/richtext-slate');
 const path = require('path');
+const React = require('react');
 const richTextConfig = require('./src/payload/editor/richTextConfig');
+const { getAuthHooks } = require('./payload/hooks/logrocket');
+
+const GoogleLoginButton = () =>
+  React.createElement(
+    'div',
+    { style: { marginTop: 24, textAlign: 'center' } },
+    React.createElement(
+      'button',
+      {
+        type: 'button',
+        onClick: () => {
+          if (typeof window !== 'undefined') {
+            window.location.href = 'http://localhost:3000/api/auth/signin/google';
+          }
+        },
+        style: {
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 8,
+          padding: '8px 16px',
+          borderRadius: 4,
+          border: '1px solid #444',
+          backgroundColor: '#fff',
+          color: '#222',
+          cursor: 'pointer',
+          fontSize: 14,
+        },
+      },
+      React.createElement(
+        'span',
+        {
+          style: {
+            display: 'inline-block',
+            width: 18,
+            height: 18,
+            backgroundColor: '#fff',
+            borderRadius: '50%',
+            marginRight: 4,
+            border: '1px solid #ccc',
+            textAlign: 'center',
+            lineHeight: '16px',
+            fontWeight: 'bold',
+            fontSize: 12,
+          },
+        },
+        'G'
+      ),
+      React.createElement('span', null, 'Đăng nhập với Google')
+    )
+  );
 // Collections - Pages
 const { AboutPage, HomePage } = require('./src/payload/collections/pages');
 
 // Collections - Content
-const { Products, News, Services, Reviews, TeamMembers, Media } = require('./src/payload/collections/content');
+const { Products, News, Services, Reviews, TeamMembers, Media, ActivityLogs } = require('./src/payload/collections/content');
 
 // Collections - Taxonomy (Categories)
 const { NewsCategories, ServiceCategories } = require('./src/payload/collections/taxonomy');
@@ -16,7 +67,7 @@ const { NewsCategories, ServiceCategories } = require('./src/payload/collections
 // Collections - Submissions
 const { ContactSubmissions } = require('./src/payload/collections/submissions');
 // Globals
-const { Home, ContactInfo, FooterInfo, ContactCTA, TestGlobal, FloatingButtons, SiteBranding, Navigation } = require('./src/payload/globals');
+const { Home, ContactInfo, FooterInfo, ContactCTA, TestGlobal, FloatingButtons, SiteBranding } = require('./src/payload/globals');
 
 module.exports = buildConfig({
   serverURL: process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3001',
@@ -64,14 +115,13 @@ module.exports = buildConfig({
         return config;
       },
     }),
-    meta: {
-      titleSuffix: '- VinhPhat Printing',
-      favicon: '/favicon.ico',
+    components: {
+      beforeLogin: [GoogleLoginButton],
     },
   },
   editor: richTextConfig,
   db: mongooseAdapter({
-    url: process.env.MONGODB_URI || 'mongodb+srv://duytoan20052011:Maiyeu9a3@duy.01c086q.mongodb.net/VinhPhat?retryWrites=true&w=majority',
+    url: process.env.MONGODB_URI,
   }),
   email: {
     fromName: 'VinhPhat Printing',
@@ -117,8 +167,26 @@ module.exports = buildConfig({
           defaultValue: 'editor',
           required: true,
         },
+        {
+          name: 'googleId',
+          type: 'text',
+          label: 'Google ID',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: 'avatarUrl',
+          type: 'text',
+          label: 'Avatar URL',
+          admin: {
+            readOnly: true,
+          },
+        },
       ],
+      hooks: getAuthHooks(),
     },
+    ActivityLogs,
     
     // === Pages ===
     // HomePage, // Tạm thời comment để sử dụng Home global
@@ -147,7 +215,6 @@ module.exports = buildConfig({
     ContactCTA,
     FloatingButtons,
     SiteBranding,
-    Navigation,
   ],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),

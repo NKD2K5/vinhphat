@@ -1,5 +1,6 @@
 const CKEditorField = require('../../../components/CKEditorFieldSafe');
 const ImageUploadField = require('../../../components/ImageUploadField');
+const { buildCollectionHooks } = require('../../../../payload/hooks/logrocket');
 
 exports.News = {
   slug: 'news',
@@ -24,6 +25,7 @@ exports.News = {
   versions: {
     drafts: true,
   },
+  hooks: buildCollectionHooks('news'),
   fields: [
     {
       name: 'title',

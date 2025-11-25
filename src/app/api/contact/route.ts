@@ -28,21 +28,28 @@ export async function POST(request: NextRequest) {
           uploadFormData.append('file', file);
 
           console.log('Uploading file to C# API:', process.env.CSHARP_API_URL + '/api/Upload');
-          
-          // Tắt SSL verification bằng cách set NODE_TLS_REJECT_UNAUTHORIZED
+          const uploadUrl = process.env.CSHARP_API_URL + '/api/Upload';
+
+          // Chỉ tắt SSL verification trong môi trường không phải production
+          const shouldDisableTLS = process.env.NODE_ENV !== 'production';
           const originalRejectUnauthorized = process.env.NODE_TLS_REJECT_UNAUTHORIZED;
-          process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-          
-          const uploadResponse = await fetch(process.env.CSHARP_API_URL + '/api/Upload', {
+
+          if (shouldDisableTLS) {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+          }
+
+          const uploadResponse = await fetch(uploadUrl, {
             method: 'POST',
             body: uploadFormData,
           });
           
-          // Khôi phục lại setting
-          if (originalRejectUnauthorized !== undefined) {
-            process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalRejectUnauthorized;
-          } else {
-            delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+          // Khôi phục lại setting nếu đã thay đổi
+          if (shouldDisableTLS) {
+            if (originalRejectUnauthorized !== undefined) {
+              process.env.NODE_TLS_REJECT_UNAUTHORIZED = originalRejectUnauthorized;
+            } else {
+              delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+            }
           }
           
           if (uploadResponse.ok) {

@@ -1,8 +1,9 @@
-'use client';
+"use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FiMenu, FiX } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
+import Logo from '@/components/Logo/Logo';
 
 // Dynamically import ThemeToggle to avoid SSR issues
 const ThemeToggle = dynamic(() => import('../ThemeToggle/ThemeToggle'), { ssr: false });
@@ -38,9 +39,7 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white">
-            VinhPhat<span className="text-blue-600">Printing</span>
-          </Link>
+          <Logo className="h-12" />
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">

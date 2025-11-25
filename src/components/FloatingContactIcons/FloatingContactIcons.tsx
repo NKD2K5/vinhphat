@@ -4,8 +4,6 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { FaPhoneAlt, FaFacebookMessenger, FaWhatsapp, FaGlobe } from 'react-icons/fa';
 import { SiZalo, SiGmail } from 'react-icons/si';
-import { useTheme } from 'next-themes';
-import { useFloatingButtons } from '@/hooks/useFloatingButtons';
 
 type ButtonType = 'phone' | 'messenger' | 'zalo' | 'gmail' | 'website' | 'whatsapp';
 
@@ -19,7 +17,6 @@ interface ButtonConfig {
 
 interface FloatingButtonsData {
   enabled: boolean;
-  position: 'left' | 'right';
   buttons: ButtonConfig[];
 }
 
@@ -33,7 +30,7 @@ interface ContactIconProps {
   href?: string;
   className?: string;
   style?: React.CSSProperties;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 const ContactIcon = ({
@@ -44,14 +41,12 @@ const ContactIcon = ({
   style,
   onClick,
 }: ContactIconProps) => {
-  // Create a wrapper div to ensure the icon is always visible and perfectly centered
   const IconWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="relative z-10 dark:brightness-100 flex items-center justify-center w-full h-full">
       {children}
     </div>
   );
 
-  // Add a background circle to ensure visibility
   const BackgroundCircle = () => (
     <div className="absolute inset-0 rounded-full bg-white bg-opacity-30 dark:bg-opacity-40"></div>
   );
@@ -79,7 +74,11 @@ const ContactIcon = ({
         damping: 10,
         borderColor: { duration: 0.2 }
       }}
-      onClick={onClick}
+      onClick={(e) => {
+        if (onClick) {
+          onClick(e);
+        }
+      }}
     >
       <BackgroundCircle />
       <IconWrapper>
@@ -106,21 +105,66 @@ interface FloatingContactIconsProps {
 }
 
 const FloatingContactIcons: React.FC<FloatingContactIconsProps> = ({ hidden = false }) => {
-  const { data: floatingButtons, isLoading, error } = useFloatingButtons();
+  const [floatingButtons, setFloatingButtons] = useState<FloatingButtonsData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeIcon, setActiveIcon] = useState<string | null>(null);
   const controls = useAnimation();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { theme } = useTheme();
 
-  // Debug log
+  // Fetch data từ CMS
   useEffect(() => {
-    console.log('Floating buttons data:', {
-      data: floatingButtons,
-      isLoading,
-      error,
-      hidden
-    });
-  }, [floatingButtons, isLoading, error, hidden]);
+    const fetchFloatingButtons = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Thay đổi URL này thành endpoint CMS của bạn
+        const response = await fetch('/api/floating-buttons');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        console.log('Fetched floating buttons data:', data);
+        setFloatingButtons(data);
+      } catch (err) {
+        console.error('Error fetching floating buttons:', err);
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        
+        // Fallback data nếu API fail
+        setFloatingButtons({
+          enabled: true,
+          buttons: [
+            {
+              type: 'phone',
+              label: 'Phone',
+              url: 'tel:+84123456789',
+              enabled: true
+            },
+            {
+              type: 'zalo',
+              label: 'Zalo',
+              url: 'https://zalo.me/84123456789',
+              enabled: true
+            },
+            {
+              type: 'messenger',
+              label: 'Messenger',
+              url: 'https://m.me/yourpage',
+              enabled: true
+            }
+          ]
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFloatingButtons();
+  }, []);
 
   // Clear timeout on unmount
   useEffect(() => {
@@ -187,22 +231,50 @@ const FloatingContactIcons: React.FC<FloatingContactIconsProps> = ({ hidden = fa
     }
   }, []);
 
-  const handleButtonClick = useCallback((button: ButtonConfig) => {
+  const handleButtonClick = useCallback((button: ButtonConfig, e: React.MouseEvent) => {
+    e.preventDefault();
     handleIconClick(button.type);
     
-    if (button.type === 'phone' || button.type === 'gmail') {
-      window.location.href = button.url;
-    } else {
-      window.open(button.url, '_blank', 'noopener,noreferrer');
-    }
+    setTimeout(() => {
+      if (button.type === 'phone' || button.type === 'gmail') {
+        window.location.href = button.url;
+      } else {
+        window.open(button.url, '_blank', 'noopener,noreferrer');
+      }
+    }, 100);
   }, [handleIconClick]);
 
-  // Don't render anything if hidden, loading, or no data
-  if (hidden || isLoading || !floatingButtons) {
+  // Debug log
+  useEffect(() => {
+    console.log('Component state:', {
+      floatingButtons,
+      isLoading,
+      error,
+      hidden
+    });
+  }, [floatingButtons, isLoading, error, hidden]);
+
+  // Don't render if hidden
+  if (hidden) {
     return null;
   }
 
-  const { enabled, position = 'left', buttons = [] } = floatingButtons;
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="fixed left-5 bottom-5 z-50">
+        <div className="w-14 h-14 rounded-full bg-gray-200 animate-pulse"></div>
+      </div>
+    );
+  }
+
+  // Don't render if no data or error
+  if (!floatingButtons || error) {
+    console.error('Floating buttons error or no data:', error);
+    return null;
+  }
+
+  const { enabled, buttons = [] } = floatingButtons;
   const enabledButtons = buttons.filter(button => button?.enabled);
 
   if (!enabled || enabledButtons.length === 0) {
@@ -211,7 +283,7 @@ const FloatingContactIcons: React.FC<FloatingContactIconsProps> = ({ hidden = fa
 
   return (
     <div 
-      className={`fixed ${position === 'left' ? 'left-5' : 'right-5'} bottom-5 z-50`}
+      className="fixed left-5 bottom-5 z-50"
       data-testid="floating-contact-icons"
     >
       <div className="flex flex-col gap-4">
@@ -253,7 +325,7 @@ const FloatingContactIcons: React.FC<FloatingContactIconsProps> = ({ hidden = fa
               <ContactIcon
                 icon={getIconByType(button.type)}
                 label={button.label}
-                onClick={() => handleButtonClick(button)}
+                onClick={(e) => handleButtonClick(button, e)}
                 className="hover:brightness-110"
                 style={{
                   background: button.backgroundColor || getDefaultBackground(button.type),

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Phone, Mail, MapPin, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 
 type ContactData = {
@@ -31,20 +31,24 @@ type ContactData = {
 
 type ContactModalProps = {
   isOpen: boolean;
-  onClose: () => void;
   data: ContactData | null;
   isLoading?: boolean;
 };
 
 export default function ContactModal({
   isOpen,
-  onClose,
   data,
   isLoading = false,
 }: ContactModalProps) {
   const [expandedFaqIndex, setExpandedFaqIndex] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(isOpen);
 
-  if (!isOpen) return null;
+  // Sync modal state with prop
+  useEffect(() => {
+    setIsModalOpen(isOpen);
+  }, [isOpen]);
+
+  if (!isModalOpen) return null;
 
   const toggleFaq = (index: number) => {
     setExpandedFaqIndex(expandedFaqIndex === index ? null : index);
@@ -57,7 +61,7 @@ export default function ContactModal({
         <div className="sticky top-0 bg-gradient-to-r from-green-600 to-green-700 text-white p-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold">Thông Tin Liên Hệ</h2>
           <button
-            onClick={onClose}
+            onClick={() => setIsModalOpen(false)}
             className="p-1 hover:bg-white/20 rounded-full transition-colors"
             aria-label="Close modal"
           >

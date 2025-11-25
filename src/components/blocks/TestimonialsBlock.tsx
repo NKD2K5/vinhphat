@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 
 interface Testimonial {
   customerName: string;
@@ -42,7 +41,7 @@ export const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({ data }) =>
   };
 
   // Check if image URL is valid
-  const isValidImageUrl = (url: string) => {
+  const isValidImageUrl = (url: string | undefined) => {
     if (!url) return false;
     // Skip Cloudinary URLs that might be broken
     if (url.includes('testimonials/customer-')) {
@@ -56,7 +55,6 @@ export const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({ data }) =>
     } catch {
       return false;
     }
-    return true;
   };
 
   return (
@@ -84,76 +82,65 @@ export const TestimonialsBlock: React.FC<TestimonialsBlockProps> = ({ data }) =>
         
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {data.testimonials.map((testimonial, index) => (
-            <div 
-              key={index} 
-              className="group relative bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700"
-            >
-              {/* Quote Icon */}
-              <div className="absolute top-6 right-6 text-blue-100 dark:text-gray-700 opacity-50">
-                <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-              </div>
+          {data.testimonials.map((testimonial, index) => {
+            const imageUrl = isValidImageUrl(testimonial.image) 
+              ? testimonial.image! 
+              : getPlaceholderImage(testimonial.customerName);
 
-              {/* Rating Stars */}
-              <div className="flex gap-1 mb-4">
-                {renderStars(testimonial.rating || 5)}
-              </div>
-
-              {/* Content */}
+            return (
               <div 
-                className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed text-base relative z-10"
-                dangerouslySetInnerHTML={{ __html: `"${testimonial.content}"` }}
-              />
+                key={index} 
+                className="group relative bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700"
+              >
+                {/* Quote Icon */}
+                <div className="absolute top-6 right-6 text-blue-100 dark:text-gray-700 opacity-50">
+                  <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
+                </div>
 
-              {/* Customer Info with Photo */}
-              <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
-                {/* Customer Photo */}
-                <div className="relative w-14 h-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-blue-100 dark:ring-gray-700">
-                  {isValidImageUrl(testimonial.image) ? (
-                    <Image
-                      src={testimonial.image!}
+                {/* Rating Stars */}
+                <div className="flex gap-1 mb-4">
+                  {renderStars(testimonial.rating || 5)}
+                </div>
+
+                {/* Content */}
+                <div 
+                  className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed text-base relative z-10"
+                  dangerouslySetInnerHTML={{ __html: `"${testimonial.content}"` }}
+                />
+
+                {/* Customer Info with Photo */}
+                <div className="flex items-center gap-4 mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+                  {/* Customer Photo */}
+                  <div className="relative w-14 h-14 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-blue-100 dark:ring-gray-700">
+                    <img
+                      src={imageUrl}
                       alt={testimonial.customerName}
                       width={56}
                       height={56}
-                      className="object-cover"
-                      unoptimized={true}
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (!target.dataset.errorHandled) {
-                          target.dataset.errorHandled = 'true';
-                          target.src = getPlaceholderImage(testimonial.customerName);
-                        }
-                      }}
+                      className="object-cover w-full h-full"
+                      loading="lazy"
                     />
-                  ) : (
-                    <Image
-                      src={getPlaceholderImage(testimonial.customerName)}
-                      alt={testimonial.customerName}
-                      width={56}
-                      height={56}
-                      className="object-cover"
-                    />
-                  )}
+                  </div>
+
+                  {/* Customer Details */}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-gray-900 dark:text-white text-base truncate">
+                      {testimonial.customerName}
+                    </h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {testimonial.position}
+                      {testimonial.company && ` • ${testimonial.company}`}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Customer Details */}
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-gray-900 dark:text-white text-base truncate">
-                    {testimonial.customerName}
-                  </h4>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {testimonial.position}
-                    {testimonial.company && ` • ${testimonial.company}`}
-                  </p>
-                </div>
+                {/* Hover accent line */}
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-3xl"></div>
               </div>
-
-              {/* Hover accent line */}
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 to-purple-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-3xl"></div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

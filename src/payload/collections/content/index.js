@@ -4,6 +4,7 @@ const { Services } = require('./Services');
 const { Reviews } = require('./Reviews');
 const { TeamMembers } = require('./TeamMembers');
 const { Media } = require('./Media');
+const { ActivityLogs } = require('./ActivityLogs');
 
 module.exports = {
   Products,
@@ -12,4 +13,5 @@ module.exports = {
   Reviews,
   TeamMembers,
   Media,
+  ActivityLogs,
 };

@@ -10,12 +10,17 @@ const nextConfig = {
   },
 
   images: {
-    unoptimized: false,
+    unoptimized: true,
     formats: ['image/webp', 'image/avif'],
 
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
         hostname: 'res.cloudinary.com',
         pathname: '/**',
       },

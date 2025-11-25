@@ -1,5 +1,7 @@
 // Temporarily disable custom component due to React import issues
 
+const ImageUploadField = require('../../components/ImageUploadField');
+
 const SiteBranding = {
   slug: 'site-branding',
   label: 'Logo & Thương Hiệu',
@@ -21,6 +23,9 @@ const SiteBranding = {
           admin: {
             description: 'URL của logo (có thể dùng placehold.co: https://placehold.co/200x60/1e40af/ffffff?text=Logo)',
             placeholder: 'https://placehold.co/200x60/1e40af/ffffff?text=VinhPhat',
+            components: {
+              Field: ImageUploadField,
+            },
           },
         },
         {
@@ -75,6 +80,9 @@ const SiteBranding = {
             condition: (data, siblingData) => siblingData?.enabled,
             description: 'URL logo cho thiết bị di động',
             placeholder: 'https://your-domain.com/uploads/logo-mobile.png',
+            components: {
+              Field: ImageUploadField,
+            },
           },
         },
         {
@@ -109,6 +117,9 @@ const SiteBranding = {
           admin: {
             description: 'URL favicon (khuyến nghị: ICO hoặc PNG 32x32px)',
             placeholder: 'https://your-domain.com/favicon.ico',
+            components: {
+              Field: ImageUploadField,
+            },
           },
         },
         {
@@ -118,6 +129,9 @@ const SiteBranding = {
           admin: {
             description: 'URL icon cho iOS (khuyến nghị: PNG 180x180px)',
             placeholder: 'https://your-domain.com/apple-touch-icon.png',
+            components: {
+              Field: ImageUploadField,
+            },
           },
         },
       ],

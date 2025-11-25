@@ -4,11 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Phone, MessageCircle, Mail, MapPin, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-// Dynamically import ContactModal to avoid SSR issues
-const ContactModal = dynamic(() => import('./ContactModal'), {
-  ssr: false,
-  loading: () => <div className="w-12 h-12" aria-hidden="true" />
-});
+// Import ContactModal directly since it's a client component
+import ContactModal from './ContactModal';
 
 type ContactData = {
   companyInfo?: {
@@ -85,6 +82,13 @@ export default function FloatingButtons() {
     };
 
     fetchContactData();
+
+    // Fetch lại mỗi 30 giây
+    const interval = setInterval(() => {
+      fetchContactData();
+    }, 30000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   // Don't render anything on the server
@@ -167,7 +171,6 @@ export default function FloatingButtons() {
       {isMounted && (
         <ContactModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
           data={contactData}
         />
       )}

@@ -1,5 +1,6 @@
 const CKEditorField = require('../../../components/CKEditorFieldSafe');
 const ImageUploadField = require('../../../components/ImageUploadField');
+const { buildCollectionHooks } = require('../../../../payload/hooks/logrocket');
 
 const Services = {
   slug: 'service-items',
@@ -16,6 +17,7 @@ const Services = {
   access: {
     read: () => true,
   },
+  hooks: buildCollectionHooks('service-items'),
   fields: [
     {
       name: 'name',

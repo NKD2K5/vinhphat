@@ -1,6 +1,7 @@
 const express = require('express');
 const payload = require('payload');
 const path = require('path');
+const registerOauthRoutes = require('./payload/oauth');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env.local') });
 
@@ -23,6 +24,9 @@ const start = async () => {
     });
 
     console.log('Payload initialized successfully!');
+
+    // Đăng ký OAuth routes sau khi Payload khởi tạo
+    registerOauthRoutes(app, payload);
 
     // Add frontend routes after Payload is initialized
     const homeRoute = require('./src/frontend/home');

@@ -1,8 +1,15 @@
 
 const path = require('path');
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development', // Disable PWA in development
+  buildExcludes: [/middleware-manifest\.json$/],
+});
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withPWA({
   reactStrictMode: true,
   poweredByHeader: false,
   
@@ -18,7 +25,7 @@ const nextConfig = {
   
   // Image optimization configuration
   images: {
-    unoptimized: false, // Bật tối ưu hình ảnh
+    unoptimized: true, // Bật tối ưu hình ảnh
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -36,6 +43,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
         hostname: 'res.cloudinary.com',
         pathname: '/**',
       },
@@ -137,12 +149,12 @@ const nextConfig = {
   
   // Environment variables
   env: {
-    MONGODB_URI: process.env.MONGODB_URI || 'mongodb+srv://duytoan20052011:Maiyeu9a3@duy.01c086q.mongodb.net/VinhPhat',
+    MONGODB_URI: process.env.MONGODB_URI,
     PAYLOAD_SECRET: process.env.PAYLOAD_SECRET || 'your-super-secret-payload-secret-here',
     NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000',
     NEXT_PUBLIC_PAYLOAD_URL: process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3001',
   },
-}
+});
 
 // Export the config
 module.exports = nextConfig;

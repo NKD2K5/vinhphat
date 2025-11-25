@@ -108,39 +108,76 @@ export default function HomeCMSPage() {
     
     async function fetchData() {
       try {
-        // Fetch Home page data
-        const homeResponse = await fetch('/api/home-page');
+        const timestamp = Date.now();
+        
+        // Enhanced fetch for home page with cache control
+        console.log('🔍 Fetching home page data...');
+        const homeResponse = await fetch(`/api/home-page?t=${timestamp}`, {
+          method: 'GET',
+          cache: 'no-store',
+          next: { revalidate: 0 },
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
+        });
+
+        console.log('🔍 Home API Status:', homeResponse.status);
+        
         if (homeResponse.ok) {
           const result = await homeResponse.json();
+          console.log('🔍 Home API Response:', result);
           
-          if (result.homePage && result.homePage.layout && result.homePage.layout.length > 0) {
+          // Log hero block data for debugging
+          const heroBlock = result.homePage?.layout?.find((b: any) => b.blockType === 'hero');
+          console.log('🔍 Hero Block Data:', heroBlock);
+          console.log('🔍 Hero Slides:', heroBlock?.slides);
+          
+          if (result.homePage?.layout?.length > 0) {
             setPageData(result.homePage);
           } else {
-            console.log('⚠️ Không có dữ liệu CMS');
+            console.warn('⚠️ No layout data found in API response');
             setPageData(null);
           }
         } else {
-          console.log('⚠️ API lỗi');
+          console.error('❌ Home API Error:', {
+            status: homeResponse.status,
+            statusText: homeResponse.statusText
+          });
           setPageData(null);
         }
 
-        // Fetch About page data for AboutBlock
-        const aboutResponse = await fetch('/api/about-page', {
+        // Enhanced fetch for about page
+        console.log('🔍 Fetching about page data...');
+        const aboutResponse = await fetch(`/api/about-page?t=${timestamp}`, {
+          method: 'GET',
           cache: 'no-store',
+          next: { revalidate: 0 },
           headers: {
-            'Cache-Control': 'no-cache',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
           },
         });
+
         if (aboutResponse.ok) {
           const aboutResult = await aboutResponse.json();
-          console.log('📦 About Page Data:', aboutResult.aboutPage);
-          console.log('📦 Company Story:', aboutResult.aboutPage?.companyStory);
+          console.log('🔍 About Page Data:', aboutResult.aboutPage);
+          console.log('🔍 Company Story:', aboutResult.aboutPage?.companyStory);
           setAboutPageData(aboutResult.aboutPage);
         } else {
-          console.error('❌ Failed to fetch about page:', aboutResponse.status);
+          console.error('❌ About Page API Error:', {
+            status: aboutResponse.status,
+            statusText: aboutResponse.statusText
+          });
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('❌ Error fetching data:', {
+          error: err,
+          message: err instanceof Error ? err.message : 'Unknown error',
+          timestamp: new Date().toISOString()
+        });
         setPageData(null);
       } finally {
         setLoading(false);
@@ -393,6 +430,7 @@ export default function HomeCMSPage() {
         {/* Content blocks */}
         <div className="relative z-10">
           {pageData.layout.map((block: any, index: number) => {
+            try { console.log('🔧 Rendering block:', block.blockType); } catch {}
             const renderedBlock = renderBlock(block, index);
             
             // Tự động thêm AboutBlock sau Hero block

@@ -12,7 +12,6 @@ type ButtonConfig = {
 
 type FloatingButtonsData = {
   enabled: boolean;
-  position: 'left' | 'right';
   buttons: ButtonConfig[];
 };
 
@@ -39,9 +38,24 @@ export function useFloatingButtons() {
         let json;
         try {
           json = JSON.parse(text);
+          console.log('Raw API response:', json);
+          
           // Check if the response has the expected data structure
           if (json && json.data) {
-            setData(json.data);
+            // Only extract the fields we need
+            const data = json.data;
+            console.log('CMS data:', data);
+            
+            const cleanedData = {
+              enabled: data.enabled !== false,
+              buttons: Array.isArray(data.buttons) ? data.buttons.filter((btn: any) => {
+                const isValid = btn && btn.type && btn.url;
+                console.log('Button validation:', btn, 'isValid:', isValid);
+                return isValid;
+              }) : [],
+            };
+            console.log('Cleaned data:', cleanedData);
+            setData(cleanedData);
           } else {
             throw new Error('Invalid data structure in response');
           }
@@ -58,7 +72,6 @@ export function useFloatingButtons() {
         // Fallback data in case of error
         const fallbackData = {
           enabled: true,
-          position: 'left',
           buttons: [
             {
               type: 'phone',

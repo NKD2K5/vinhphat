@@ -5,8 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
+import PhanDauTrang from '@/app/components/PhanDauTrang/PhanDauTrang';
 
-const PhanDauTrang = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
 const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: false });
 const ContactCTA = dynamic(() => import('../../components/ContactCTA/ContactCTA'), { ssr: false });
 
