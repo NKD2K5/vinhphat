@@ -6,6 +6,7 @@ import ClientLayout from "./ClientLayout";
 import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 // Import FloatingButtons
 import FloatingButtons from '@/components/FloatingButtons';
@@ -84,12 +85,14 @@ export default function ClientRootLayout({
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <ClientLayout>
-            <main className="flex-grow" suppressHydrationWarning>
-              {children}
-            </main>
-            <FloatingButtons />
-          </ClientLayout>
+          <AuthProvider>
+            <ClientLayout>
+              <main className="flex-grow" suppressHydrationWarning>
+                {children}
+              </main>
+              <FloatingButtons />
+            </ClientLayout>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -6,56 +6,7 @@ const path = require('path');
 const React = require('react');
 const richTextConfig = require('./src/payload/editor/richTextConfig');
 const { getAuthHooks } = require('./payload/hooks/logrocket');
-
-const GoogleLoginButton = () =>
-  React.createElement(
-    'div',
-    { style: { marginTop: 24, textAlign: 'center' } },
-    React.createElement(
-      'button',
-      {
-        type: 'button',
-        onClick: () => {
-          if (typeof window !== 'undefined') {
-            window.location.href = 'http://localhost:3000/api/auth/signin/google';
-          }
-        },
-        style: {
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 8,
-          padding: '8px 16px',
-          borderRadius: 4,
-          border: '1px solid #444',
-          backgroundColor: '#fff',
-          color: '#222',
-          cursor: 'pointer',
-          fontSize: 14,
-        },
-      },
-      React.createElement(
-        'span',
-        {
-          style: {
-            display: 'inline-block',
-            width: 18,
-            height: 18,
-            backgroundColor: '#fff',
-            borderRadius: '50%',
-            marginRight: 4,
-            border: '1px solid #ccc',
-            textAlign: 'center',
-            lineHeight: '16px',
-            fontWeight: 'bold',
-            fontSize: 12,
-          },
-        },
-        'G'
-      ),
-      React.createElement('span', null, 'Đăng nhập với Google')
-    )
-  );
-// Collections - Pages
+const GoogleLoginButton = require('./payload/components/GoogleLoginButton');
 const { AboutPage, HomePage } = require('./src/payload/collections/pages');
 
 // Collections - Content
@@ -116,6 +67,7 @@ module.exports = buildConfig({
       },
     }),
     components: {
+      // Đăng ký GoogleLoginButton hiển thị trên màn hình login
       beforeLogin: [GoogleLoginButton],
     },
   },

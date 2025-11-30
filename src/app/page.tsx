@@ -94,6 +94,8 @@ const ContactCTA = dynamic(() => import('@/components/ContactCTA/ContactCTA'), {
 
 
 export default function HomeCMSPage() {
+  console.log('🔥 HomeCMSPage component rendering!');
+  
   const [pageData, setPageData] = useState<any>(null);
   const [aboutPageData, setAboutPageData] = useState<any>(null);
   const [loading, setLoading] = useState(true);

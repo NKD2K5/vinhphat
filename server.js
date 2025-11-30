@@ -1,18 +1,22 @@
 const express = require('express');
 const payload = require('payload');
 const path = require('path');
-const registerOauthRoutes = require('./payload/oauth');
+const handleOAuthCallback = require('./payload/middleware/oauthHandler');
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env.local') });
 
 const app = express();
 
 console.log('Starting Payload CMS server...');
-console.log('Config path:', process.env.PAYLOAD_CONFIG_PATH || 'src/payload/payload.config.ts');
 
 const start = async () => {
   try {
     console.log('Initializing Payload...');
+    
+    // ✅ Add OAuth middleware BEFORE Payload init
+    app.use(handleOAuthCallback);
     
     // Initialize Payload
     await payload.init({
@@ -25,78 +29,108 @@ const start = async () => {
 
     console.log('Payload initialized successfully!');
 
-    // Đăng ký OAuth routes sau khi Payload khởi tạo
-    registerOauthRoutes(app, payload);
+    // OAuth test route
+    app.get('/oauth-test', (req, res) => {
+      console.log('=== OAuth Test Route ===');
+      console.log('Query params:', req.query);
+      res.json({
+        message: 'OAuth test route',
+        query: req.query,
+        originalUrl: req.originalUrl,
+        hasAccessToken: !!req.query.access_token,
+        hasCode: !!req.query.code
+      });
+    });
 
-    // Add frontend routes after Payload is initialized
+    // Debug route để xem tất cả params
+    app.get('/admin/debug', (req, res) => {
+      console.log('=== Admin Debug Route ===');
+      console.log('Query params:', req.query);
+      console.log('URL:', req.originalUrl);
+      res.json({
+        message: 'Admin debug route',
+        query: req.query,
+        originalUrl: req.originalUrl,
+        hasCode: !!req.query.code,
+        hasError: !!req.query.error
+      });
+    });
+
+    // Frontend home route
     const homeRoute = require('./src/frontend/home');
     
-    // Add frontend route với error handling
-    app.get('/', async (req, res) => {
+    app.get('/', async (req, res, next) => {
       try {
-        console.log('🔍 Truy cập trang chủ...');
+        console.log('🔍 Accessing homepage...');
         
-        // Test xem payload có hoạt động không
         const homeData = await payload.findGlobal({
           slug: 'home-page'
         });
         
-        console.log('✅ Lấy dữ liệu CMS thành công:', homeData ? 'Có dữ liệu' : 'Không có dữ liệu');
+        console.log('✅ CMS data:', homeData ? 'Found' : 'Not found');
         
         if (!homeData) {
-          return res.send(`
-            <h1>❌ Không tìm thấy dữ liệu CMS</h1>
-            <p>Home Global chưa có dữ liệu</p>
-            <a href="/admin">Vào Admin Panel để tạo dữ liệu</a>
+          return res.status(404).send(`
+            <h1>❌ No CMS Data Found</h1>
+            <p>Home Global has no data yet</p>
+            <a href="/admin">Go to Admin Panel to create data</a>
           `);
         }
         
-        // Gọi homeRoute nếu có dữ liệu
         return homeRoute(req, res);
         
       } catch (error) {
-        console.error('❌ Lỗi trang chủ:', error);
-        res.status(500).send(`
-          <h1>❌ Lỗi Server</h1>
-          <p><strong>Chi tiết:</strong> ${error.message}</p>
-          <p><strong>Stack:</strong> ${error.stack}</p>
-          <a href="/admin">Vào Admin Panel</a>
-          <br><a href="/debug">Debug Server</a>
-        `);
+        console.error('❌ Homepage error:', error);
+        next(error); // Pass to error handler
       }
     });
     
     // Redirect /home to root
-    app.get('/home', (_, res) => {
+    app.get('/home', (req, res) => {
       res.redirect('/');
     });
     
-    // Test route để kiểm tra CMS
+    // Test CMS route
     app.get('/test-cms', homeRoute);
     
-    // Route debug
+    // Debug route
     app.get('/debug', (req, res) => {
       res.send(`
-        <h1>🔍 DEBUG SERVER</h1>
-        <p><strong>Server Time:</strong> ${new Date()}</p>
-        <p><strong>Routes Available:</strong></p>
+        <h1>🔍 SERVER DEBUG</h1>
+        <p><strong>Server Time:</strong> ${new Date().toISOString()}</p>
+        <p><strong>Available Routes:</strong></p>
         <ul>
-          <li><a href="/">/ - Trang chủ CMS</a></li>
+          <li><a href="/">/ - Homepage CMS</a></li>
           <li><a href="/test-cms">/test-cms - Test CMS</a></li>
           <li><a href="/admin">/admin - Admin Panel</a></li>
+          <li><a href="/oauth-test">/oauth-test - OAuth Test</a></li>
         </ul>
-        <p><strong>Server Status:</strong> ✅ RUNNING</p>
+        <p><strong>Status:</strong> ✅ RUNNING</p>
       `);
     });
     
-    console.log('Frontend routes added successfully!');
-
-    app.listen(3001, async () => {
-      console.log('✓ Server listening on port 3001');
-      console.log('✓ Admin panel: http://localhost:3001/admin');
+    // ✅ Error handling middleware
+    app.use((err, req, res, next) => {
+      console.error('Server error:', err);
+      res.status(500).send(`
+        <h1>❌ Server Error</h1>
+        <p><strong>Message:</strong> ${err.message}</p>
+        <p><strong>Stack:</strong> <pre>${err.stack}</pre></p>
+        <a href="/admin">Go to Admin Panel</a>
+        <br><a href="/debug">Debug Server</a>
+      `);
     });
+
+    const PORT = process.env.PORT || 3001;
+    
+    app.listen(PORT, () => {
+      console.log(`✓ Server listening on port ${PORT}`);
+      console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);
+      console.log(`✓ Homepage: http://localhost:${PORT}`);
+    });
+    
   } catch (error) {
-    console.error('Error starting server:', error);
+    console.error('❌ Fatal error starting server:', error);
     process.exit(1);
   }
 };

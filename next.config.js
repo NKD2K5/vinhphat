@@ -12,6 +12,7 @@ const withPWA = require('next-pwa')({
 const nextConfig = withPWA({
   reactStrictMode: true,
   poweredByHeader: false,
+  turbopack: {}, // Add empty turbopack config
   
   // Tắt Turbopack vì không tương thích với Payload CMS v2
   // Sử dụng Webpack thay thế
