@@ -1,136 +1,177 @@
 const express = require('express');
 const payload = require('payload');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const handleOAuthCallback = require('./payload/middleware/oauthHandler');
 const axios = require('axios');
-const jwt = require('jsonwebtoken');
+const https = require('https');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env.local') });
 
 const app = express();
 
-console.log('Starting Payload CMS server...');
+// ✅ COOKIE PARSER PHẢI Ở TRÊN
+app.use(cookieParser());
+
+console.log('🚀 Starting Payload CMS server...');
 
 const start = async () => {
   try {
-    console.log('Initializing Payload...');
-    
-    // ✅ Add OAuth middleware BEFORE Payload init
-    app.use(handleOAuthCallback);
-    
-    // Initialize Payload
+    console.log('🔧 Initializing Payload...');
+
     await payload.init({
-      secret: process.env.PAYLOAD_SECRET || 'your-super-secret-payload-secret-here',
+      secret: process.env.PAYLOAD_SECRET || 'payload-secret-dev',
       express: app,
       onInit: async () => {
-        payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`);
+        payload.logger.info(`✅ Payload Admin URL: ${payload.getAdminURL()}`);
       },
     });
 
-    console.log('Payload initialized successfully!');
+    console.log('✅ Payload initialized successfully!');
 
-    // OAuth test route
+    /**
+     * ===============================
+     * 🔐 AUTH MIDDLEWARE (C# SSO)
+     * ===============================
+     */
+    app.use(async (req, res, next) => {
+      try {
+        // ❌ Skip asset + nội bộ Payload
+        if (
+          req.path.startsWith('/admin') ||
+          req.path.startsWith('/api') ||
+          req.path.startsWith('/assets') ||
+          req.path.includes('.js') ||
+          req.path.includes('.css')
+        ) {
+          return next();
+        }
+
+        if (!req.cookies) return next();
+
+        const token = req.cookies?.['payload-token'];
+        if (!token || req.user) return next();
+
+        console.log('🍪 payload-token detected');
+
+        const csharpApiUrl =
+          process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
+
+        const response = await axios.post(
+          `${csharpApiUrl}/Auth/get-session`,
+          { token },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 5000,
+            httpsAgent: new https.Agent({
+              rejectUnauthorized: false, // localhost
+            }),
+          }
+        );
+
+        if (!response.data?.user) return next();
+
+        const csharpUser = response.data.user;
+
+        const payloadUsers = await payload.find({
+          collection: 'users',
+          where: {
+            email: { equals: csharpUser.email },
+          },
+          limit: 1,
+        });
+
+        if (payloadUsers.docs.length === 0) {
+          console.log('⚠️ User tồn tại bên C# nhưng chưa có trong Payload');
+          return next();
+        }
+
+        req.user = {
+          id: payloadUsers.docs[0].id,
+          email: payloadUsers.docs[0].email,
+          collection: 'users',
+        };
+
+        console.log('✅ Auth OK:', csharpUser.email);
+      } catch (err) {
+        console.log('⚠️ C# API auth failed:', err.message);
+      }
+
+      next();
+    });
+
+    /**
+     * ===============================
+     * 🌐 OAUTH GOOGLE
+     * ===============================
+     */
+    app.use(handleOAuthCallback);
+
     app.get('/oauth-test', (req, res) => {
-      console.log('=== OAuth Test Route ===');
-      console.log('Query params:', req.query);
       res.json({
-        message: 'OAuth test route',
+        message: 'OAuth test',
         query: req.query,
-        originalUrl: req.originalUrl,
-        hasAccessToken: !!req.query.access_token,
-        hasCode: !!req.query.code
-      });
-    });
-
-    // Debug route để xem tất cả params
-    app.get('/admin/debug', (req, res) => {
-      console.log('=== Admin Debug Route ===');
-      console.log('Query params:', req.query);
-      console.log('URL:', req.originalUrl);
-      res.json({
-        message: 'Admin debug route',
-        query: req.query,
-        originalUrl: req.originalUrl,
         hasCode: !!req.query.code,
-        hasError: !!req.query.error
       });
     });
 
-    // Frontend home route
+    app.get('/admin/debug', (req, res) => {
+      res.json({
+        cookies: req.cookies,
+        user: req.user,
+        query: req.query,
+      });
+    });
+
+    /**
+     * ===============================
+     * 🏠 FRONTEND CMS
+     * ===============================
+     */
     const homeRoute = require('./src/frontend/home');
-    
+
     app.get('/', async (req, res, next) => {
       try {
-        console.log('🔍 Accessing homepage...');
-        
         const homeData = await payload.findGlobal({
-          slug: 'home-page'
+          slug: 'home-page',
         });
-        
-        console.log('✅ CMS data:', homeData ? 'Found' : 'Not found');
-        
+
         if (!homeData) {
           return res.status(404).send(`
-            <h1>❌ No CMS Data Found</h1>
-            <p>Home Global has no data yet</p>
-            <a href="/admin">Go to Admin Panel to create data</a>
+            <h1>❌ No CMS Data</h1>
+            <a href="/admin">Go to Admin</a>
           `);
         }
-        
+
         return homeRoute(req, res);
-        
-      } catch (error) {
-        console.error('❌ Homepage error:', error);
-        next(error); // Pass to error handler
+      } catch (err) {
+        next(err);
       }
     });
-    
-    // Redirect /home to root
-    app.get('/home', (req, res) => {
-      res.redirect('/');
-    });
-    
-    // Test CMS route
+
+    app.get('/home', (_, res) => res.redirect('/'));
     app.get('/test-cms', homeRoute);
-    
-    // Debug route
-    app.get('/debug', (req, res) => {
-      res.send(`
-        <h1>🔍 SERVER DEBUG</h1>
-        <p><strong>Server Time:</strong> ${new Date().toISOString()}</p>
-        <p><strong>Available Routes:</strong></p>
-        <ul>
-          <li><a href="/">/ - Homepage CMS</a></li>
-          <li><a href="/test-cms">/test-cms - Test CMS</a></li>
-          <li><a href="/admin">/admin - Admin Panel</a></li>
-          <li><a href="/oauth-test">/oauth-test - OAuth Test</a></li>
-        </ul>
-        <p><strong>Status:</strong> ✅ RUNNING</p>
-      `);
-    });
-    
-    // ✅ Error handling middleware
+
+    /**
+     * ===============================
+     * 🧯 ERROR HANDLER
+     * ===============================
+     */
     app.use((err, req, res, next) => {
-      console.error('Server error:', err);
+      console.error('❌ Server error:', err);
       res.status(500).send(`
-        <h1>❌ Server Error</h1>
-        <p><strong>Message:</strong> ${err.message}</p>
-        <p><strong>Stack:</strong> <pre>${err.stack}</pre></p>
-        <a href="/admin">Go to Admin Panel</a>
-        <br><a href="/debug">Debug Server</a>
+        <h1>Server Error</h1>
+        <pre>${err.message}</pre>
       `);
     });
 
     const PORT = process.env.PORT || 3001;
-    
     app.listen(PORT, () => {
-      console.log(`✓ Server listening on port ${PORT}`);
-      console.log(`✓ Admin panel: http://localhost:${PORT}/admin`);
-      console.log(`✓ Homepage: http://localhost:${PORT}`);
+      console.log(`🔥 Server running at http://localhost:${PORT}`);
+      console.log(`🛠 Admin: http://localhost:${PORT}/admin`);
     });
-    
   } catch (error) {
-    console.error('❌ Fatal error starting server:', error);
+    console.error('💀 Fatal error:', error);
     process.exit(1);
   }
 };

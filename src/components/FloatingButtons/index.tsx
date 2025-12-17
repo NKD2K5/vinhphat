@@ -37,27 +37,57 @@ export default function FloatingButtons() {
         
         // Fallback data in case API is not available
         const fallbackData = {
-          phoneNumber: '0123456789',
-          email: 'contact@example.com',
-          zaloLink: 'https://zalo.me/0123456789',
-          messengerLink: 'https://m.me/yourpage'
+          phoneNumber: '0965952000',
+          email: 'invinhphat6868@gmail.com',
+          zaloLink: 'https://zalo.me/0965952000',
+          messengerLink: 'https://www.facebook.com/people/In-Vinh-Ph%C3%A1t/61575271242570/'
         };
 
         try {
-          const response = await fetch('/api/globals/contact');
+          const timestamp = Date.now(); // Move timestamp generation inside useEffect
+          const response = await fetch(`/api/floating-buttons?t=${timestamp}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0'
+            },
+            cache: 'no-store'
+          });
           if (response.ok) {
-            const data = await response.json();
+            const result = await response.json();
+            console.log('API Response:', result); // Debug log
+            const data = result.data;
+            console.log('Contact Data:', data); // Debug log
+            
+            // Map buttons array to contactData structure
+            const phoneButton = data.buttons?.find((btn: any) => btn.type === 'phone');
+            const messengerButton = data.buttons?.find((btn: any) => btn.type === 'messenger');
+            const zaloButton = data.buttons?.find((btn: any) => btn.type === 'zalo');
+            const gmailButton = data.buttons?.find((btn: any) => btn.type === 'gmail');
+            
             setContactData({
               companyInfo: {
-                phone: data.phoneNumber || fallbackData.phoneNumber,
-                email: data.email || fallbackData.email
+                phone: phoneButton?.url?.replace('tel:', '') || fallbackData.phoneNumber,
+                email: gmailButton?.url?.replace('mailto:', '') || fallbackData.email
               },
               socialMedia: {
-                zalo: data.zaloLink || fallbackData.zaloLink,
-                messenger: data.messengerLink || fallbackData.messengerLink
+                zalo: zaloButton?.url || fallbackData.zaloLink,
+                messenger: messengerButton?.url || fallbackData.messengerLink
               }
             });
+            console.log('Set Contact Data:', {
+              companyInfo: {
+                phone: phoneButton?.url?.replace('tel:', '') || fallbackData.phoneNumber,
+                email: gmailButton?.url?.replace('mailto:', '') || fallbackData.email
+              },
+              socialMedia: {
+                zalo: zaloButton?.url || fallbackData.zaloLink,
+                messenger: messengerButton?.url || fallbackData.messengerLink
+              }
+            }); // Debug log
           } else {
+            console.log('API Response not ok:', response.status); // Debug log
             throw new Error('API not available');
           }
         } catch (err) {
@@ -98,7 +128,7 @@ export default function FloatingButtons() {
 
   if (isLoading) {
     return (
-      <div className="fixed right-4 bottom-4 flex flex-col gap-3 z-50">
+      <div className="fixed left-4 bottom-4 flex flex-col gap-3 z-50">
         <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full animate-pulse" />
       </div>
     );
@@ -106,7 +136,7 @@ export default function FloatingButtons() {
 
   if (error) {
     return (
-      <div className="fixed right-4 bottom-4 bg-red-100 text-red-700 p-2 rounded text-sm max-w-xs z-50">
+      <div className="fixed left-4 bottom-4 bg-red-100 text-red-700 p-2 rounded text-sm max-w-xs z-50">
         {error}
       </div>
     );
@@ -114,7 +144,8 @@ export default function FloatingButtons() {
 
   return (
     <>
-      <div className="fixed right-4 bottom-4 flex flex-col gap-3 z-50">
+      {console.log('Rendering with contactData:', contactData)}
+      <div className="fixed left-4 bottom-4 flex flex-col gap-3 z-50">
         {contactData?.companyInfo?.phone && (
           <a
             href={`tel:${contactData.companyInfo.phone}`}

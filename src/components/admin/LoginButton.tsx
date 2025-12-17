@@ -45,7 +45,6 @@ export default function LoginButton({ onSuccess, onError }: LoginButtonProps) {
             id: authResponse.user.id,
             name: authResponse.user.name,
             email: authResponse.user.email,
-            image: authResponse.user.image,
             token: authResponse.token,
           };
 

@@ -7,6 +7,9 @@ const React = require('react');
 const richTextConfig = require('./src/payload/editor/richTextConfig');
 const { getAuthHooks } = require('./payload/hooks/logrocket');
 const GoogleLoginButton = require('./payload/components/GoogleLoginButton');
+const PasswordField = require('./payload/components/PasswordField');
+const CustomLogin = require('./payload/components/CustomLogin');
+const PasswordEyeIcon = require('./payload/components/PasswordEyeIcon');
 const { AboutPage, HomePage } = require('./src/payload/collections/pages');
 
 // Collections - Content
@@ -17,6 +20,11 @@ const { NewsCategories, ServiceCategories } = require('./src/payload/collections
 
 // Collections - Submissions
 const { ContactSubmissions } = require('./src/payload/collections/submissions');
+const { Orders } = require('./src/payload/collections/orders/Orders');
+
+// Endpoints
+const { markOrderAsRead } = require('./src/endpoints/markOrderAsRead');
+
 // Globals
 const { Home, ContactInfo, FooterInfo, ContactCTA, TestGlobal, FloatingButtons, SiteBranding } = require('./src/payload/globals');
 
@@ -67,8 +75,8 @@ module.exports = buildConfig({
       },
     }),
     components: {
-      // Đăng ký GoogleLoginButton hiển thị trên màn hình login
-      beforeLogin: [GoogleLoginButton],
+      // Đăng ký GoogleLoginButton và PasswordEyeIcon hiển thị trên màn hình login
+      beforeLogin: [GoogleLoginButton, PasswordEyeIcon],
     },
   },
   editor: richTextConfig,
@@ -135,13 +143,70 @@ module.exports = buildConfig({
             readOnly: true,
           },
         },
+        {
+          name: 'loginAttempts',
+          type: 'number',
+          label: 'Số lần đăng nhập',
+          defaultValue: 0,
+          min: 0,
+          admin: {
+            readOnly: true,
+          },
+          hooks: {
+            beforeChange: [
+              ({ value, operation }) => {
+                // Convert to number and handle all edge cases
+                if (value === null || value === undefined || value === '') {
+                  return 0;
+                }
+                
+                const numValue = Number(value);
+                
+                // If conversion results in NaN, default to 0
+                if (isNaN(numValue) || !isFinite(numValue)) {
+                  return 0;
+                }
+                
+                // Ensure it's not negative
+                return Math.max(0, Math.floor(numValue));
+              }
+            ],
+            beforeValidate: [
+              ({ value }) => {
+                // Same logic as beforeChange for extra safety
+                if (value === null || value === undefined || value === '') {
+                  return 0;
+                }
+                
+                const numValue = Number(value);
+                
+                if (isNaN(numValue) || !isFinite(numValue)) {
+                  return 0;
+                }
+                
+                return Math.max(0, Math.floor(numValue));
+              }
+            ]
+          },
+          validate: (value) => {
+            // Final validation check
+            const numValue = Number(value);
+            if (isNaN(numValue) || !isFinite(numValue)) {
+              return 'loginAttempts must be a valid number';
+            }
+            if (numValue < 0) {
+              return 'loginAttempts cannot be negative';
+            }
+            return true;
+          }
+        },
       ],
       hooks: getAuthHooks(),
     },
     ActivityLogs,
     
     // === Pages ===
-    // HomePage, // Tạm thời comment để sử dụng Home global
+    // HomePage, // Tạm thởi comment để sử dụng Home global
     AboutPage,
     
     // === Content ===
@@ -158,6 +223,7 @@ module.exports = buildConfig({
     
     // === Submissions ===
     ContactSubmissions,
+    Orders,
   ],
   globals: [
     // ImageCleanup, // Temporarily disabled due to React component error
@@ -167,6 +233,13 @@ module.exports = buildConfig({
     ContactCTA,
     FloatingButtons,
     SiteBranding,
+  ],
+  endpoints: [
+    {
+      path: '/orders/:id/mark-read',
+      method: 'patch',
+      handler: markOrderAsRead,
+    },
   ],
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Cấu hình base URL cho API
-const API_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:4000';
+const API_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3001';
 
 // Tạo instance axios cho API
 export const api = axios.create({

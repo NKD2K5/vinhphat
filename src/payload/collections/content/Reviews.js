@@ -9,6 +9,7 @@ exports.Reviews = {
     useAsTitle: 'customerName',
     defaultColumns: ['customerName', 'rating', 'date'],
     group: 'Nội Dung',
+    hidden: true,
   },
   access: {
     read: () => true,

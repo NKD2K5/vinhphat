@@ -5,10 +5,11 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { FaFacebook, FaTwitter, FaLinkedin, FaEnvelope, FaPhone, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
 import { addToRecentlyViewed } from '@/utils/recentlyViewed';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
+import { addItemToCart } from '@/utils/cart';
 
 const PhanDauTrang = dynamic(() => import('../../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
 const Footer = dynamic(() => import('../../components/Footer/Footer'), { ssr: false });
@@ -56,6 +57,7 @@ interface NewsPost {
 export default function ProductDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
+  const router = useRouter();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -340,6 +342,36 @@ export default function ProductDetailPage() {
               {/* Price */}
               <div className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">
                 {product.price || 'Liên hệ'}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 mb-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    addItemToCart(
+                      {
+                        productId: product.id,
+                        slug: product.slug,
+                        name: product.name,
+                        priceText: product.price || 'Liên hệ',
+                        image: product.image,
+                      },
+                      1,
+                    );
+                    router.push('/gio-hang');
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
+                >
+                  Thêm vào giỏ
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => router.push('/gio-hang')}
+                  className="px-5 py-2.5 rounded-xl border border-blue-600 text-blue-600 text-sm font-semibold hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors"
+                >
+                  Xem giỏ hàng
+                </button>
               </div>
 
               {/* THÔNG SỐ CƠ BẢN */}

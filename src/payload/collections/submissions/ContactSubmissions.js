@@ -1,3 +1,7 @@
+const ReadStatusBadge = require('../../../../payload/components/ReadStatusBadge');
+const ContactReadStatusBadge = require('../../../../payload/components/ContactReadStatusBadge');
+const MarkContactAsReadOnView = require('../../../../payload/components/MarkContactAsReadOnView');
+
 const ContactSubmissions = {
   slug: 'contact-submissions',
   labels: {
@@ -6,7 +10,7 @@ const ContactSubmissions = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email', 'phone', 'createdAt', 'status'],
+    defaultColumns: ['name', 'email', 'phone', 'createdAt', 'isRead'],
     group: 'Biểu Mẫu',
     description: 'Quản lý các yêu cầu liên hệ từ khách hàng',
   },
@@ -191,6 +195,15 @@ const ContactSubmissions = {
   },
   fields: [
     {
+      name: 'markContactAsReadOnView',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: MarkContactAsReadOnView,
+        },
+      },
+    },
+    {
       name: 'name',
       type: 'text',
       label: 'Họ và Tên',
@@ -294,6 +307,35 @@ const ContactSubmissions = {
       ],
       admin: {
         description: 'Trạng thái xử lý yêu cầu',
+        hidden: true,
+      },
+    },
+    {
+      name: 'isRead',
+      type: 'checkbox',
+      label: 'Trạng thái đọc',
+      defaultValue: false,
+      admin: {
+        disableBulkEdit: true,
+        components: {
+          Cell: ContactReadStatusBadge,
+        },
+      },
+    },
+    {
+      name: 'readAt',
+      type: 'date',
+      label: 'Thời gian đọc',
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'readBy',
+      type: 'text',
+      label: 'Người đọc',
+      admin: {
+        hidden: true,
       },
     },
     {

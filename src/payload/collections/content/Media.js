@@ -7,6 +7,7 @@ const Media = {
   admin: {
     useAsTitle: 'filename',
     group: 'Nội Dung',
+    hidden: true,
   },
   access: {
     read: () => true,

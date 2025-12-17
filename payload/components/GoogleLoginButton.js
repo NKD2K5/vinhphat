@@ -37,26 +37,10 @@ const GoogleLoginButton = () => {
     try {
       console.log('Processing OAuth callback with code...');
       
-      // Send authorization code to server for processing
-      const response = await fetch('/api/auth/google/callback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          code,
-          redirectUri: window.location.origin + '/auth/google/callback'
-        })
-      });
-
-      if (response.ok) {
-        console.log('OAuth processed successfully, redirecting...');
-        window.location.href = '/admin/collections';
-      } else {
-        const error = await response.text();
-        console.error('OAuth processing failed:', error);
-        setError('Đăng nhập thất bại: ' + error);
-      }
+      // OAuth callback được xử lý bởi middleware, chỉ cần redirect về admin
+      console.log('OAuth processing successful, redirecting to admin...');
+      window.location.href = '/admin';
+      
     } catch (error) {
       console.error('OAuth callback error:', error);
       setError('Đăng nhập thất bại');

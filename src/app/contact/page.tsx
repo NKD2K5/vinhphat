@@ -14,16 +14,8 @@ import Footer from '@/app/components/Footer/Footer';
 // Custom motion components with simplified animation
 const Motion = {
   Section: ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
-    const [isMounted, setIsMounted] = useState(false);
-    
-    useEffect(() => {
-      setIsMounted(true);
-    }, []);
-    
     return (
-      <section 
-        className={`${className} transition-opacity duration-500 ${isMounted ? 'opacity-100' : 'opacity-0'}`}
-      >
+      <section className={className}>
         {children}
       </section>
     );

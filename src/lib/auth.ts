@@ -16,7 +16,7 @@ export interface AuthResponse {
     id: string;
     name: string;
     email: string;
-    image: string;
+    role: string;
   };
 }
 
@@ -24,7 +24,6 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
-  image: string;
   token: string;
 }
 

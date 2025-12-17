@@ -8,6 +8,7 @@ import { FaSearch } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
 import { useNavigation } from '@/hooks/useNavigation';
 import Logo from '@/components/Logo/Logo';
+import SearchSuggestions from '@/components/SearchSuggestions/SearchSuggestions';
 
 // Dynamically import ThemeToggle to avoid SSR issues with proper loading state
 const ChuyenDoiGiaoDien = dynamic(
@@ -24,6 +25,7 @@ const PhanDauTrang = () => {
   const [daCuon, setDaCuon] = useState(false);
   const [moMenu, setMoMenu] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -46,6 +48,30 @@ const PhanDauTrang = () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      router.push(`/tim-kiem?q=${encodeURIComponent(searchValue)}`);
+      setMoMenu(false);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    setShowSuggestions(true);
+  };
+
+  const handleSuggestionSelect = (product: any) => {
+    setSearchValue(product.name);
+    setShowSuggestions(false);
+  };
+
+  const handleSuggestionsClose = () => {
+    setShowSuggestions(false);
+  };
 
   const { data: danhSachLienKet, isLoading } = useNavigation();
 
@@ -80,26 +106,23 @@ const PhanDauTrang = () => {
 
           {/* Search Bar */}
           <div className="hidden md:block flex-1 max-w-md">
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (searchValue.trim()) {
-                  router.push(`/tim-kiem?q=${encodeURIComponent(searchValue)}`);
-                  setMoMenu(false);
-                }
-              }}
-              className="relative"
-            >
+            <form onSubmit={handleSearchSubmit} className="relative">
               <input
                 type="text"
                 placeholder="Tìm kiếm sản phẩm..."
                 value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={handleSearchChange}
+                onFocus={() => setShowSuggestions(true)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
               />
               <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
                 <FaSearch className="w-4 h-4" />
               </button>
+              <SearchSuggestions
+                searchValue={searchValue}
+                onSelect={handleSuggestionSelect}
+                onClose={handleSuggestionsClose}
+              />
             </form>
           </div>
 
@@ -141,6 +164,28 @@ const PhanDauTrang = () => {
         {/* Menu di động */}
         {moMenu && (
           <div className="md:hidden mt-4 pb-4">
+            {/* Mobile Search */}
+            <div className="mb-4">
+              <form onSubmit={handleSearchSubmit} className="relative">
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm sản phẩm..."
+                  value={searchValue}
+                  onChange={handleSearchChange}
+                  onFocus={() => setShowSuggestions(true)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                />
+                <button type="submit" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                  <FaSearch className="w-4 h-4" />
+                </button>
+                <SearchSuggestions
+                  searchValue={searchValue}
+                  onSelect={handleSuggestionSelect}
+                  onClose={handleSuggestionsClose}
+                />
+              </form>
+            </div>
+            
             <div className="flex flex-col space-y-3">
               {danhSachLienKet.map((lienKet, index) => (
                 <Link

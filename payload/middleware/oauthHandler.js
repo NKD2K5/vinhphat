@@ -1,6 +1,7 @@
-// Middleware xử lý OAuth callback từ Google
+// Middleware xử lý OAuth callback từ Google cho Payload CMS
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const https = require('https');
 
 function handleOAuthCallback(req, res, next) {
   console.log('=== Middleware Called ===');
@@ -8,62 +9,145 @@ function handleOAuthCallback(req, res, next) {
   console.log('Query params:', req.query);
   console.log('Original URL:', req.originalUrl);
   
-  // Xử lý OAuth callback với authorization code
-  if (req.path === '/admin' && req.query.code) {
+  // CHỈ xử lý OAuth callback khi có authorization code, KHÔNG xử lý /admin thông thường
+  if (req.path === '/auth/google/callback' && req.query.code) {
     console.log('✅ Found authorization code - Processing OAuth...');
     const code = req.query.code;
-    const state = req.query.state || 'http://localhost:3001/admin';
-    
-    console.log('OAuth callback received, processing authorization code...');
-    
-    processAuthorizationCode(code, state)
-      .then((result) => {
-        console.log('✅ OAuth processing successful, setting cookie...');
-        
-        // Set Payload token cookie
-        const payloadSecret = process.env.PAYLOAD_SECRET || 'your-super-secret-payload-secret-here';
-        const payloadToken = jwt.sign(
-          {
-            id: result.user.id,
-            email: result.user.email,
-            collection: 'users',
-            role: 'admin',
-          },
-          payloadSecret,
-          { expiresIn: '7d' }
-        );
+    const baseURL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3001';
 
-        // Set cookie với Payload token
-        res.cookie('payload-token', payloadToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: 7 * 24 * 60 * 60 * 1000,
+    (async () => {
+      try {
+        // 1. Exchange authorization code lấy access_token từ Google
+        const tokenRes = await axios.post('https://oauth2.googleapis.com/token', {
+          code,
+          client_id: process.env.GOOGLE_CLIENT_ID,
+          client_secret: process.env.GOOGLE_CLIENT_SECRET,
+          redirect_uri: `${baseURL}/auth/google/callback`,
+          grant_type: 'authorization_code',
         });
 
-        console.log('✅ Set Payload token cookie, redirecting to admin dashboard');
-        // Redirect về admin dashboard
-        return res.redirect('/admin/collections');
-      })
-      .catch((error) => {
-        console.error('❌ OAuth processing failed:', error);
-        console.error('Error details:', error.message);
-        console.error('Full error stack:', error.stack);
-        
-        // Encode error details for URL
-        const errorDetails = encodeURIComponent(`${error.message} | Stack: ${error.stack}`);
-        return res.redirect(`/admin?error=oauth_failed&details=${errorDetails}`);
-      });
-    
-    return; // Ngừng xử lý tiếp theo
+        const { access_token } = tokenRes.data;
+        if (!access_token) {
+          throw new Error('Cannot get access_token from Google');
+        }
+
+        // 2. Lấy Google user info
+        const { data: googleUser } = await axios.get(
+          'https://www.googleapis.com/oauth2/v2/userinfo',
+          {
+            headers: { Authorization: `Bearer ${access_token}` },
+          }
+        );
+
+        const email = googleUser.email;
+        const name = googleUser.name || googleUser.given_name || '';
+        const googleId = String(googleUser.id || '');
+
+        if (!email) {
+          throw new Error('Google user has no email');
+        }
+
+        // 3. Gọi C# API chỉ để xác thực business
+        const csharpApiUrl =
+          process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
+
+        const csharpRes = await axios.post(
+          `${csharpApiUrl}/Auth/oauth-login`,
+          {
+            email,
+            sub: googleId,
+            name,
+          },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            timeout: 10000,
+            httpsAgent: new https.Agent({
+              // Cho phép self-signed cert ở môi trường dev
+              rejectUnauthorized: false,
+            }),
+          }
+        );
+
+        const businessUser = csharpRes.data && csharpRes.data.user;
+
+        if (!businessUser) {
+          throw new Error('No user returned from C# API');
+        }
+
+        if (businessUser.role !== 'admin') {
+          throw new Error('User is not allowed to access admin');
+        }
+
+        // 4. Tạo hoặc cập nhật user trong Payload `users`
+        const GENERATED_PASSWORD =
+          process.env.GOOGLE_OAUTH_PASSWORD || 'google-oauth-internal-secret';
+
+        const existing = await req.payload.find({
+          collection: 'users',
+          where: { email: { equals: email } },
+          limit: 1,
+        });
+
+        let payloadUser;
+
+        if (existing.docs && existing.docs.length > 0) {
+          // User đã tồn tại: đồng bộ lại thông tin và đảm bảo password khớp với GENERATED_PASSWORD
+          payloadUser = await req.payload.update({
+            collection: 'users',
+            id: existing.docs[0].id,
+            data: {
+              email,
+              name: businessUser.name || name,
+              role: 'admin',
+              googleId: googleId,
+              password: GENERATED_PASSWORD,
+            },
+          });
+        } else {
+          payloadUser = await req.payload.create({
+            collection: 'users',
+            data: {
+              email,
+              name: businessUser.name || name,
+              role: 'admin',
+              googleId: googleId,
+              // Password nội bộ cho Payload auth
+              password: GENERATED_PASSWORD,
+            },
+          });
+        }
+
+        // 5. Đăng nhập user bằng Payload auth (Payload là auth master)
+        await req.payload.login({
+          collection: 'users',
+          data: {
+            email,
+            password: GENERATED_PASSWORD,
+          },
+          req,
+          res,
+        });
+
+        console.log('✅ Google OAuth login via Payload success for:', email);
+        return res.redirect('/admin');
+      } catch (error) {
+        console.error('❌ Google OAuth middleware error:', error);
+        return res.redirect(
+          `/admin?error=oauth_failed&message=${encodeURIComponent(
+            error.message || 'OAuth failed'
+          )}`
+        );
+      }
+    })();
+
+    return;
   }
   
-  // Kiểm tra nếu có error parameter từ redirect
-  if (req.path === '/admin' && req.query.error) {
+  // Kiểm tra nếu có error parameter từ OAuth redirect
+  if (req.query.error && (req.path === '/admin' || req.path === '/auth/google/callback')) {
     console.log('❌ OAuth error received:', req.query.error);
     console.log('Error details:', req.query.details || 'No details provided');
     
-    // Decode error details if present
     if (req.query.details) {
       try {
         const decodedDetails = decodeURIComponent(req.query.details);
@@ -73,17 +157,15 @@ function handleOAuthCallback(req, res, next) {
       }
     }
     
-    // Không redirect nữa để tránh infinite loop, chỉ tiếp tục xử lý bình thường
     console.log('Continuing to admin page with error...');
     return next();
   }
   
   console.log('Not an OAuth callback, continuing normal processing...');
-  // Nếu không phải OAuth callback, tiếp tục xử lý bình thường
   next();
 }
 
-async function processAuthorizationCode(code, state) {
+async function processAuthorizationCode(code, state, path, req, res) {
   try {
     console.log('=== OAuth Authorization Code Processing Started ===');
     console.log('Authorization code:', code);
@@ -97,7 +179,7 @@ async function processAuthorizationCode(code, state) {
         code,
         client_id: '398534795337-370j22gken1h6of3vmbf5p2i12sakhml.apps.googleusercontent.com',
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: 'http://localhost:3001/admin',
+        redirect_uri: 'http://localhost:3001/auth/google/callback',
         grant_type: 'authorization_code'
       });
       
@@ -125,18 +207,24 @@ async function processAuthorizationCode(code, state) {
       const csharpApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
       console.log('C# API URL:', csharpApiUrl);
       
+      const payload = {
+        email: googleUser.email || '',
+        sub: String(googleUser.id || ''),
+        name: googleUser.name || '',
+      };
+
+      console.log('📤 Payload being sent to C# API:');
+      console.log('   - email:', payload.email, '(type:', typeof payload.email + ')');
+      console.log('   - sub:', payload.sub, '(type:', typeof payload.sub + ')');
+      console.log('   - name:', payload.name, '(type:', typeof payload.name + ')');
+      console.log('   - Full payload object:', JSON.stringify(payload, null, 2));
+      
       try {
-        const authResponse = await axios.post(`${csharpApiUrl}/Auth/oauth-login`, {
-          id: googleUser.id,
-          email: googleUser.email,
-          name: googleUser.name,
-          picture: googleUser.picture,
-        }, {
+        const authResponse = await axios.post(`${csharpApiUrl}/Auth/oauth-login`, payload, {
           headers: {
             'Content-Type': 'application/json',
           },
           timeout: 10000,
-          // ✅ Bỏ qua SSL verification cho self-signed certificate
           httpsAgent: new (require('https').Agent)({
             rejectUnauthorized: false
           })
@@ -144,26 +232,37 @@ async function processAuthorizationCode(code, state) {
         
         console.log('Step 3 SUCCESS - C# API response:', authResponse.data);
         
-        const { token } = authResponse.data;
+        const { token, user: csharpUser } = authResponse.data;
         if (!token) {
           throw new Error('No token received from C# API');
         }
         
-        // 4. Verify JWT token với C# API secret
-        console.log('Step 4: Verifying JWT token...');
-        const secret = process.env.CSHARP_API_SECRET || 'your-csharp-api-secret';
-        console.log('C# API secret available:', !!secret);
+        // 4. Decode JWT token
+        console.log('Step 4: Decoding JWT token...');
+        const decoded = jwt.decode(token);
         
-        const decoded = jwt.verify(token, secret);
-        
-        if (!decoded || !decoded.user) {
+        if (!decoded || !decoded.sub) {
           throw new Error('Invalid JWT token from C# API');
         }
         
-        console.log('Step 4 SUCCESS - JWT verified, user:', decoded.user);
+        console.log('Step 4 SUCCESS - JWT decoded, token payload:', {
+          sub: decoded.sub,
+          email: decoded.email,
+          name: decoded.name,
+          role: decoded.role
+        });
+        
+        const user = {
+          id: decoded.sub,
+          email: decoded.email,
+          name: decoded.name,
+          role: decoded.role || 'admin'
+        };
+        
+        console.log('Step 4 FINAL - User object for Payload:', user);
         console.log('=== OAuth Authorization Code Processing Completed ===');
         
-        return { user: decoded.user };
+        return { user };
         
       } catch (apiError) {
         console.error('Step 3 FAILED - C# API Error:', {
@@ -223,39 +322,59 @@ async function processGoogleToken(accessToken, state) {
     const csharpApiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
     console.log('Step 2: Calling C# API at:', `${csharpApiUrl}/Auth/oauth-login`);
     
+    const payload = {
+      email: googleUser.email || '',
+      sub: String(googleUser.id || ''),
+      name: googleUser.name || '',
+    };
+
+    console.log('📤 Payload being sent to C# API:');
+    console.log('   - email:', payload.email, '(type:', typeof payload.email + ')');
+    console.log('   - sub:', payload.sub, '(type:', typeof payload.sub + ')');
+    console.log('   - name:', payload.name, '(type:', typeof payload.name + ')');
+    console.log('   - Full payload object:', JSON.stringify(payload, null, 2));
+    
     try {
-      const authResponse = await axios.post(`${csharpApiUrl}/Auth/oauth-login`, {
-        id: googleUser.id,
-        email: googleUser.email,
-        name: googleUser.name,
-        picture: googleUser.picture,
-      }, {
+      const authResponse = await axios.post(`${csharpApiUrl}/Auth/oauth-login`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 10000, // 10 seconds timeout
+        timeout: 10000,
       });
       
       console.log('Step 2 SUCCESS - C# API response:', authResponse.data);
       
-      const { token } = authResponse.data;
+      const { token, user: csharpUser } = authResponse.data;
       if (!token) {
         throw new Error('No token received from C# API');
       }
       
-      // 3. Verify JWT token với C# API secret
-      console.log('Step 3: Verifying JWT token...');
-      const secret = process.env.CSHARP_API_SECRET || 'your-csharp-api-secret';
-      const decoded = jwt.verify(token, secret);
+      // 3. Decode JWT token
+      console.log('Step 3: Decoding JWT token...');
+      const decoded = jwt.decode(token);
       
-      if (!decoded || !decoded.user) {
+      if (!decoded || !decoded.sub) {
         throw new Error('Invalid JWT token from C# API');
       }
       
-      console.log('Step 3 SUCCESS - JWT verified, user:', decoded.user);
+      console.log('Step 3 SUCCESS - JWT decoded, token payload:', {
+        sub: decoded.sub,
+        email: decoded.email,
+        name: decoded.name,
+        role: decoded.role
+      });
+      
+      const user = {
+        id: decoded.sub,
+        email: decoded.email,
+        name: decoded.name,
+        role: decoded.role || 'admin'
+      };
+      
+      console.log('Step 3 FINAL - User object for Payload:', user);
       console.log('=== OAuth Processing Completed ===');
       
-      return { user: decoded.user };
+      return { user };
       
     } catch (apiError) {
       console.error('Step 2 FAILED - C# API Error:', {
