@@ -83,7 +83,8 @@ export default function ProductDetailPage() {
     if (!product || allImages.length <= 1) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
-      const currentIndex = allImages.indexOf(selectedImage || product.image);
+      const currentImage = selectedImage || product.image;
+      const currentIndex = allImages.indexOf(currentImage);
       
       if (e.key === 'ArrowLeft') {
         const prevIndex = currentIndex === 0 ? allImages.length - 1 : currentIndex - 1;
@@ -265,7 +266,8 @@ export default function ProductDetailPage() {
                     <>
                       <button
                         onClick={() => {
-                          const currentIndex = allImages.indexOf(selectedImage || product.image);
+                          const currentImage = selectedImage || product.image;
+                          const currentIndex = allImages.indexOf(currentImage);
                           const prevIndex = currentIndex === 0 ? allImages.length - 1 : currentIndex - 1;
                           setSelectedImage(allImages[prevIndex]);
                         }}
@@ -276,7 +278,8 @@ export default function ProductDetailPage() {
                       </button>
                       <button
                         onClick={() => {
-                          const currentIndex = allImages.indexOf(selectedImage || product.image);
+                          const currentImage = selectedImage || product.image;
+                          const currentIndex = allImages.indexOf(currentImage);
                           const nextIndex = currentIndex === allImages.length - 1 ? 0 : currentIndex + 1;
                           setSelectedImage(allImages[nextIndex]);
                         }}

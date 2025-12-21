@@ -37,31 +37,13 @@ const Services = {
     },
     {
       name: 'category',
-      type: 'select',
+      type: 'relationship',
+      relationTo: 'service-categories',
       required: true,
       label: 'Danh Mục',
-      options: [
-        {
-          label: 'In Ấn Kỹ Thuật Số',
-          value: 'in-an-ky-thuat-so',
-        },
-        {
-          label: 'Thiết Kế Đồ Họa',
-          value: 'thiet-ke-do-hoa',
-        },
-        {
-          label: 'In Ấn Văn Phòng',
-          value: 'in-an-van-phong',
-        },
-        {
-          label: 'In Bao Bì & Nhãn Mác',
-          value: 'in-bao-bi-nhan-mac',
-        },
-        {
-          label: 'Hoàn Thiện Sau In',
-          value: 'hoan-thien-sau-in',
-        },
-      ],
+      admin: {
+        description: 'Chọn danh mục dịch vụ từ danh sách đã có',
+      },
     },
     {
       name: 'description',
