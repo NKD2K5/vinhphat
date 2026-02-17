@@ -72,25 +72,52 @@ export async function GET(request: Request) {
     // Group services by category
     const categories = categoriesData.docs
       .filter((cat: any) => cat.isActive)
-      .map((cat: any) => ({
-        id: cat.id,
-        name: cat.name,
-        slug: cat.slug,
-        description: cat.description,
-        order: cat.order,
-        subcategories: servicesData.docs
-          .filter((service: any) => service.category === cat.slug)
-          .map((service: any) => ({
-            id: service.id,
-            name: service.name,
-            slug: service.slug,
-            description: service.description,
-            image: service.image?.url || service.image,
-            category: service.category,
-            order: service.order,
-            isFeatured: service.isFeatured,
-          })),
-      }));
+      .map((cat: any) => {
+        console.log(`Processing category: ${cat.name}, _id: ${cat._id}, _id.toString(): ${cat._id?.toString?.()}`);
+        
+        const filteredServices = servicesData.docs
+          .filter((service: any) => {
+            // Handle ObjectId comparison properly
+            if (!service.category) {
+              return false;
+            }
+            
+            // Get category ID from service (could be object or string)
+            let serviceCategoryId;
+            if (typeof service.category === 'object') {
+              serviceCategoryId = service.category.id || service.category._id;
+            } else {
+              serviceCategoryId = service.category;
+            }
+            
+            // Get current category ID
+            const categoryId = cat.id || cat._id;
+            
+            // Compare as strings
+            return serviceCategoryId === categoryId;
+          });
+        
+        console.log(`  Found ${filteredServices.length} services for ${cat.name}`);
+        
+        return {
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug,
+          description: cat.description,
+          order: cat.order,
+          subcategories: filteredServices
+            .map((service: any) => ({
+              id: service.id,
+              name: service.name,
+              slug: service.slug,
+              description: service.description,
+              image: service.image?.url || service.image,
+              category: service.category,
+              order: service.order,
+              isFeatured: service.isFeatured,
+            })),
+        };
+      });
 
     return NextResponse.json({
       success: true,

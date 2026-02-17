@@ -25,14 +25,6 @@ interface ServicesBlockProps {
 
 // Default images and descriptions for categories
 const categoryDefaults: Record<string, { image: string; description: string }> = {
-  'in-an-ky-thuat-so': {
-    image: 'https://placehold.co/800x600/3b82f6/ffffff?text=Digital+Printing',
-    description: 'Dịch vụ in ấn kỹ thuật số chất lượng cao với công nghệ hiện đại'
-  },
-  'thiet-ke-do-hoa': {
-    image: 'https://placehold.co/800x600/8b5cf6/ffffff?text=Graphic+Design',
-    description: 'Thiết kế đồ họa sáng tạo và chuyên nghiệp cho mọi nhu cầu thương hiệu'
-  },
   'in-an-van-phong': {
     image: 'https://placehold.co/800x600/10b981/ffffff?text=Office+Printing',
     description: 'Giải pháp in ấn văn phòng hoàn chỉnh cho doanh nghiệp của bạn'
@@ -41,15 +33,29 @@ const categoryDefaults: Record<string, { image: string; description: string }> =
     image: 'https://placehold.co/800x600/f59e0b/ffffff?text=Packaging',
     description: 'In bao bì và nhãn mác chuyên nghiệp giúp sản phẩm nổi bật'
   },
-  'hoan-thien-sau-in': {
-    image: 'https://placehold.co/800x600/ef4444/ffffff?text=Finishing',
-    description: 'Dịch vụ hoàn thiện sau in đa dạng cho sản phẩm hoàn hảo'
+  'an-pham-tiep-thi': {
+    image: 'https://placehold.co/800x600/8b5cf6/ffffff?text=Marketing+Materials',
+    description: 'Ấn phẩm tiếp thị chuyên nghiệp cho chiến dịch quảng cáo'
+  },
+  'in-catalogue': {
+    image: 'https://placehold.co/800x600/3b82f6/ffffff?text=Catalogue',
+    description: 'In catalogue và brochure chất lượng cao'
+  },
+  'qua-tang': {
+    image: 'https://placehold.co/800x600/ef4444/ffffff?text=Premium+Gifts',
+    description: 'Quà tặng doanh nghiệp sang trọng và độc đáo'
   }
 };
 
 export function ServicesBlock({ data }: ServicesBlockProps) {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [forceUpdate, setForceUpdate] = useState(0);
+
+  // Force update when data changes
+  React.useEffect(() => {
+    setForceUpdate(prev => prev + 1);
+  }, [data.categories]);
 
   // Check if categories exist
   if (!data.categories || !Array.isArray(data.categories) || data.categories.length === 0) {
@@ -78,7 +84,7 @@ export function ServicesBlock({ data }: ServicesBlockProps) {
   }
 
   return (
-    <section className="relative py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+    <section key={`services-block-${forceUpdate}`} className="relative py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5 dark:opacity-10">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
@@ -104,10 +110,10 @@ export function ServicesBlock({ data }: ServicesBlockProps) {
         <div className="relative mb-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
             {categories.map((category, index) => {
-              const defaults = categoryDefaults[category.slug] || categoryDefaults['in-an-ky-thuat-so'];
+              const defaults = categoryDefaults[category.slug] || categoryDefaults['in-an-van-phong'];
               // Ưu tiên ảnh từ CMS, fallback về defaults
               const imageUrl = category.image || defaults.image;
-              console.log('Category:', category.name, 'Image URL:', imageUrl);
+              console.log('Category:', category.name, 'Image URL:', imageUrl, 'Hovered:', hoveredCategory);
               const isHovered = hoveredCategory === category.id;
               const isActive = activeCategory === category.id;
 
@@ -191,7 +197,6 @@ export function ServicesBlock({ data }: ServicesBlockProps) {
                     {isHovered && (
                       <div 
                         className="fixed inset-0 z-[90] flex items-center justify-center"
-                        onMouseLeave={() => setHoveredCategory(null)}
                       >
                         {/* Backdrop */}
                         <div 
@@ -202,13 +207,19 @@ export function ServicesBlock({ data }: ServicesBlockProps) {
                         {/* Tooltip Content */}
                         <div 
                           className="relative z-10 w-[90%] max-w-md p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 animate-fade-in"
+                          onMouseLeave={() => setHoveredCategory(null)}
                         >
                           {/* Category Image */}
                           <div className="mb-4 rounded-xl overflow-hidden">
                             <img 
-                              src={defaults.image} 
+                              src={imageUrl} 
                               alt={category.name}
                               className="w-full h-48 object-cover"
+                              onError={(e) => {
+                                console.error('Tooltip image failed to load:', imageUrl);
+                                // Fallback to defaults if image fails
+                                e.currentTarget.src = defaults.image;
+                              }}
                             />
                           </div>
                           

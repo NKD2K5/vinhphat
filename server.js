@@ -55,18 +55,23 @@ const start = async () => {
         console.log('🍪 payload-token detected');
 
         const csharpApiUrl =
-          process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
+          process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7118/api';
+
+        const axiosConfig = {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 5000,
+        };
+
+        if (String(csharpApiUrl).startsWith('https://')) {
+          axiosConfig.httpsAgent = new https.Agent({
+            rejectUnauthorized: false, // localhost
+          });
+        }
 
         const response = await axios.post(
           `${csharpApiUrl}/Auth/get-session`,
           { token },
-          {
-            headers: { 'Content-Type': 'application/json' },
-            timeout: 5000,
-            httpsAgent: new https.Agent({
-              rejectUnauthorized: false, // localhost
-            }),
-          }
+          axiosConfig
         );
 
         if (!response.data?.user) return next();

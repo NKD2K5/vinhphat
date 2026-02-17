@@ -27,6 +27,8 @@ const PhanDauTrang = () => {
   const [searchValue, setSearchValue] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -37,15 +39,38 @@ const PhanDauTrang = () => {
     if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
-      setDaCuon(window.scrollY > 10);
+      setDaCuon(window.scrollY > 20);
     };
 
-    // Initial check
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Check for dark theme
+    const checkDarkTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark') ||
+                     document.body.classList.contains('dark') ||
+                     window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setIsDarkTheme(isDark);
+    };
+
+    // Initial checks
     handleScroll();
+    handleResize();
+    checkDarkTheme();
 
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    
+    // Listen for theme changes
+    const observer = new MutationObserver(checkDarkTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      observer.disconnect();
     };
   }, []);
 
@@ -102,7 +127,15 @@ const PhanDauTrang = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center gap-4">
           {/* Logo */}
-          <Logo className="whitespace-nowrap" />
+          <div className={`flex-shrink-0 transition-all duration-300 ${
+            daCuon ? 'scale-90' : 'scale-100'
+          }`}>
+            <Logo 
+              isMobile={isMobile} 
+              isScrolled={daCuon} 
+              isDarkBackground={isDarkTheme} 
+            />
+          </div>
 
           {/* Search Bar */}
           <div className="hidden md:block flex-1 max-w-md">

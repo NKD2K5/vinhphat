@@ -15,6 +15,9 @@ const { AboutPage, HomePage } = require('./src/payload/collections/pages');
 // Collections - Content
 const { Products, News, Services, Reviews, TeamMembers, Media, ActivityLogs } = require('./src/payload/collections/content');
 
+// Collections - Logo History
+const { LogoHistory } = require('./src/payload/collections/logo');
+
 // Collections - Taxonomy (Categories)
 const { NewsCategories, ServiceCategories } = require('./src/payload/collections/taxonomy');
 
@@ -26,7 +29,7 @@ const { Orders } = require('./src/payload/collections/orders/Orders');
 const { markOrderAsRead } = require('./src/endpoints/markOrderAsRead');
 
 // Globals
-const { Home, ContactInfo, FooterInfo, ContactCTA, TestGlobal, FloatingButtons, SiteBranding } = require('./src/payload/globals');
+const { Home, ContactInfo, FooterInfo, ContactCTA, TestGlobal, FloatingButtons, SiteBranding, ImageCleanup } = require('./src/payload/globals');
 
 module.exports = buildConfig({
   serverURL: process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3001',
@@ -204,6 +207,7 @@ module.exports = buildConfig({
       hooks: getAuthHooks(),
     },
     ActivityLogs,
+    LogoHistory,
     
     // === Pages ===
     // HomePage, // Tạm thởi comment để sử dụng Home global
@@ -226,7 +230,7 @@ module.exports = buildConfig({
     Orders,
   ],
   globals: [
-    // ImageCleanup, // Temporarily disabled due to React component error
+    ImageCleanup, // Kích hoạt lại tool dọn dẹp ảnh
     Home, // Kích hoạt lại Home global
     ContactInfo,
     FooterInfo,

@@ -20,7 +20,7 @@ export default function CustomGoogleLoginButton({
       setIsLoading(true);
 
       // Redirect đến C# Google OAuth endpoint
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7118/api';
       const googleOAuthUrl = `${apiUrl}/Auth/google-signin`;
       
       // Mở popup hoặc redirect đến Google OAuth

@@ -1,7 +1,7 @@
 // C# API Integration for VinhPhat
 // API URL của project CTyInVinhPhat
 
-const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'https://localhost:7118/api';
+const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'http://localhost:7118/api';
 
 // ============================================
 // PRODUCTS API

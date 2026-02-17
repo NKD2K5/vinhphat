@@ -5,7 +5,7 @@ import { MongoClient } from 'mongodb';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const MONGODB_URI = process.env.MONGODB_URI!;
-const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'https://localhost:7118';
+const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'http://localhost:7118';
 
 const COLLECTIONS_WITH_IMAGES = [
   { name: 'news', fields: ['featuredImage', 'content'] },

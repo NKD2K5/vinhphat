@@ -10,6 +10,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 
 // Import FloatingButtons
 import FloatingButtons from '@/components/FloatingButtons';
+import FaviconMetadata from './FaviconMetadata';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -84,6 +85,7 @@ export default function ClientRootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans`} suppressHydrationWarning>
+        <FaviconMetadata />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <ClientLayout>

@@ -10,7 +10,7 @@ const withPWA = require('next-pwa')({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withPWA({
-  reactStrictMode: true,
+  reactStrictMode: false, // Tạm tắt trong development để tránh double-render
   poweredByHeader: false,
   turbopack: {}, // Add empty turbopack config
   
@@ -84,6 +84,16 @@ const nextConfig = withPWA({
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
+          },
+        ],
+      },
+      {
+        // No cache for main pages in development
+        source: '/(page\\.tsx|dich-vu|san-pham|tin-tuc)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
           },
         ],
       },

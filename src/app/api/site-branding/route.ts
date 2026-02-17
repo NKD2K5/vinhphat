@@ -24,19 +24,30 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching site branding:', error);
     
-    // Return default data if API fails
+    // Return default data with new fields if API fails
     return NextResponse.json({
       success: false,
       data: {
         logo: {
+          imageUrl: '',
           alt: 'VinhPhat Printing Logo',
-          width: 180,
-          height: 50,
+          displayMode: 'auto',
+          width: 240,
+          height: 72,
+          maxWidth: 280,
+          maxHeight: 80,
         },
         logoMobile: {
           enabled: false,
-          width: 120,
-          height: 35,
+          imageUrl: '',
+          width: 160,
+          height: 48,
+          customWidth: 140,
+          customHeight: 42,
+        },
+        favicon: {
+          faviconUrl: '',
+          appleTouchIconUrl: '',
         },
         siteInfo: {
           siteName: 'VinhPhat Printing',

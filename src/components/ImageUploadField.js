@@ -44,7 +44,7 @@ const ImageUploadField = (props) => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const apiUrl = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'https://localhost:7118';
+      const apiUrl = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'http://localhost:7118';
       
       console.log('🖼️ Uploading image to C# API:', `${apiUrl}/api/Upload`);
 

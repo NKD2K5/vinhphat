@@ -27,7 +27,7 @@ export interface AuthUser {
   token: string;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7118/api';
 const TOKEN_KEY = 'admin_auth_token';
 const USER_KEY = 'admin_user_data';
 

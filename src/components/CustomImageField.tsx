@@ -11,7 +11,7 @@ interface CustomImageFieldProps {
   required?: boolean;
 }
 
-const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'https://localhost:7118/api';
+const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'http://localhost:7118/api';
 
 // Helper function to extract publicId from Cloudinary URL
 const extractPublicIdFromUrl = (url: string): string | null => {

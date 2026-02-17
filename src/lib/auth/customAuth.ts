@@ -1,6 +1,6 @@
 // Custom authentication utilities for C# API integration
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhost:7118/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:7118/api';
 
 export interface AuthResponse {
   success: boolean;

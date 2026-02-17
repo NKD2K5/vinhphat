@@ -169,7 +169,7 @@ const CKEditorFieldComponent = (props) => {
                 formData.append('file', file);
 
                 // Lấy API URL từ env hoặc dùng default
-                const apiUrl = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'https://localhost:7118';
+                const apiUrl = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'http://localhost:7118';
                 
                 console.log('Uploading image to:', `${apiUrl}/api/Upload`);
 

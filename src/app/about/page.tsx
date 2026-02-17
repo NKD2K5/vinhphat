@@ -5,7 +5,7 @@ import CoreTeam from '../components/About/CoreTeam';
 import Values from '../components/About/Values';
 
 // Dynamically import Header and Footer to avoid SSR issues
-const Header = dynamic(() => import('../components/Header/Header'), { ssr: true });
+const Header = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: true });
 const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: true });
 
 export const metadata = {

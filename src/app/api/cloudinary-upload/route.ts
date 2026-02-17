@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // C# API URL
-const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'https://localhost:7118/api';
+const CSHARP_API_URL = process.env.NEXT_PUBLIC_CSHARP_API_URL || 'http://localhost:7118/api';
 
 export async function POST(request: NextRequest) {
   try {
