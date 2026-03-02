@@ -7,9 +7,6 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { CartItem, getCart, updateItemQuantity, removeItemFromCart } from '@/utils/cart';
 
-const PhanDauTrang = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
-const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: false });
-
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
@@ -46,9 +43,8 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <PhanDauTrang />
 
-      <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-24 pb-16">
+      <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-16">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
           Giỏ Hàng Của Bạn
         </h1>
@@ -170,8 +166,6 @@ export default function CartPage() {
           </div>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 }

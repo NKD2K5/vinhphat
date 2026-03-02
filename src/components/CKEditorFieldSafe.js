@@ -6,6 +6,14 @@
 const React = require('react');
 const { useCallback, useEffect, useRef, useState } = React;
 
+// Load useField from Payload once at module init to keep hook order stable
+let payloadUseField;
+try {
+  payloadUseField = require('payload/components/forms').useField;
+} catch (err) {
+  payloadUseField = null;
+}
+
 // Import custom CSS only in browser environment
 if (typeof window !== 'undefined') {
   try {
@@ -17,16 +25,10 @@ if (typeof window !== 'undefined') {
 }
 
 const CKEditorFieldSafe = (props) => {
-  // Load useField hook from Payload - MUST be called at top level
-  let useFieldHook;
-  let field = null;
-  try {
-    useFieldHook = require('payload/components/forms').useField;
-    field = useFieldHook({ path: props.path });
-  } catch (err) {
-    console.error('Failed to load useField:', err);
-  }
-  
+  // Keep hook call order stable: always call a function here.
+  // If Payload's useField cannot be loaded, fall back to a safe no-op implementation.
+  const field = (payloadUseField || (({ path }) => ({ value: '', setValue: undefined })))( { path: props.path });
+
   // State management
   const [CKEditorComponent, setCKEditorComponent] = useState(null);
   const [ClassicEditorClass, setClassicEditorClass] = useState(null);
@@ -437,3 +439,4 @@ const CKEditorFieldSafe = (props) => {
 };
 
 module.exports = CKEditorFieldSafe;
+module.exports.default = CKEditorFieldSafe;

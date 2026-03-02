@@ -24,18 +24,37 @@ export function AboutBlock({ data }: AboutBlockProps) {
   const router = useRouter();
   
   // Helper function to render rich text
-  const renderRichText = (content: any[]): string => {
-    if (!content || !Array.isArray(content)) return '';
+  const renderRichText = (content: any): string => {
+    // Nếu content là HTML string (từ CKEditor)
+    if (typeof content === 'string') {
+      return content;
+    }
     
+    // Fallback: Nếu vẫn còn Slate format (array) - legacy data
+    if (!content || !Array.isArray(content)) return '';
     return content.map((node: any) => {
       if (node.children) {
         return node.children.map((child: any) => child.text || '').join('');
       }
       return node.text || '';
-    }).join('\n\n');
+    }).filter(text => text).join('\n\n');
   };
   
   const descriptionText = renderRichText(data.description);
+
+  const getPreviewText = (content: any): string => {
+    if (typeof content === 'string') {
+      try {
+        const doc = new DOMParser().parseFromString(content, 'text/html');
+        return (doc.body?.textContent || '').trim();
+      } catch {
+        return content;
+      }
+    }
+    return renderRichText(content);
+  };
+
+  const previewText = getPreviewText(data.description);
   
   // Handler for buttons - simple navigation
   const handleButtonClick = (link: string) => {
@@ -53,7 +72,7 @@ export function AboutBlock({ data }: AboutBlockProps) {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Image - Modern with overlay effects */}
           {data.image && (
-            <div className="relative group order-2 lg:order-1">
+            <div className="relative group order-1 lg:order-1">
               <div className="relative h-[400px] md:h-[600px] rounded-3xl overflow-hidden shadow-2xl">
                 <Image
                   src={data.image}
@@ -71,17 +90,15 @@ export function AboutBlock({ data }: AboutBlockProps) {
           )}
 
           {/* Content - Modern typography */}
-          <div className="order-1 lg:order-2">
+          <div className="order-2 lg:order-2">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               {data.title}
             </h2>
             
-            <div className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed space-y-4">
-              {descriptionText.split('\n\n').map((paragraph, index) => (
-                <p key={index} className="break-words">
-                  {paragraph}
-                </p>
-              ))}
+            <div className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed break-words break-all overflow-hidden">
+              <p className="line-clamp-6 whitespace-pre-line break-words break-all">
+                {previewText}
+              </p>
             </div>
 
             {/* CTA Buttons - Modern style */}

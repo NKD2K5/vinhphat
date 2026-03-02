@@ -6,14 +6,13 @@ const path = require('path');
 const React = require('react');
 const richTextConfig = require('./src/payload/editor/richTextConfig');
 const { getAuthHooks } = require('./payload/hooks/logrocket');
-const GoogleLoginButton = require('./payload/components/GoogleLoginButton');
-const PasswordField = require('./payload/components/PasswordField');
-const CustomLogin = require('./payload/components/CustomLogin');
 const PasswordEyeIcon = require('./payload/components/PasswordEyeIcon');
+const GoogleLoginButton = require('./payload/components/GoogleLoginButton');
+
 const { AboutPage, HomePage } = require('./src/payload/collections/pages');
 
 // Collections - Content
-const { Products, News, Services, Reviews, TeamMembers, Media, ActivityLogs } = require('./src/payload/collections/content');
+const { Products, News, Services, Reviews, TeamMembers, ActivityLogs } = require('./src/payload/collections/content');
 
 // Collections - Logo History
 const { LogoHistory } = require('./src/payload/collections/logo');
@@ -29,7 +28,7 @@ const { Orders } = require('./src/payload/collections/orders/Orders');
 const { markOrderAsRead } = require('./src/endpoints/markOrderAsRead');
 
 // Globals
-const { Home, ContactInfo, FooterInfo, ContactCTA, TestGlobal, FloatingButtons, SiteBranding, ImageCleanup } = require('./src/payload/globals');
+const { ContactInfo, FooterInfo, ContactCTA, FloatingButtons, SiteBranding, ImageCleanup, Navigation, Home } = require('./src/payload/globals/index.js');
 
 module.exports = buildConfig({
   serverURL: process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:3001',
@@ -78,8 +77,8 @@ module.exports = buildConfig({
       },
     }),
     components: {
-      // Đăng ký GoogleLoginButton và PasswordEyeIcon hiển thị trên màn hình login
-      beforeLogin: [GoogleLoginButton, PasswordEyeIcon],
+      // Thêm lại GoogleLoginButton cùng với PasswordEyeIcon
+      beforeLogin: [PasswordEyeIcon, GoogleLoginButton],
     },
   },
   editor: richTextConfig,
@@ -110,9 +109,34 @@ module.exports = buildConfig({
       },
       admin: {
         useAsTitle: 'email',
-        group: 'Hệ Thống',
+        hidden: true, // Ẩn khỏi admin panel
       },
       fields: [
+        {
+          name: 'email',
+          type: 'email',
+          label: 'Email Admin',
+          required: true,
+          unique: true,
+          validate: (value) => {
+            // Chỉ cho phép email admin đăng ký
+            const adminEmails = [
+              'admin@vinhphatprinting.com',
+              'duytoan20052011@gmail.com',
+              process.env.ADMIN_EMAIL
+            ].filter(Boolean);
+            
+            if (!value) {
+              return 'Email là bắt buộc';
+            }
+            
+            if (!adminEmails.includes(value.toLowerCase())) {
+              return 'Chỉ email admin được phép đăng ký';
+            }
+            
+            return true;
+          },
+        },
         {
           name: 'name',
           type: 'text',
@@ -125,9 +149,8 @@ module.exports = buildConfig({
           label: 'Vai trò',
           options: [
             { label: 'Admin', value: 'admin' },
-            { label: 'Editor', value: 'editor' },
           ],
-          defaultValue: 'editor',
+          defaultValue: 'admin',
           required: true,
         },
         {
@@ -219,7 +242,6 @@ module.exports = buildConfig({
     Services,
     Reviews,
     TeamMembers,
-    Media,
     
     // === Taxonomy (Categories) ===
     NewsCategories,
@@ -231,12 +253,13 @@ module.exports = buildConfig({
   ],
   globals: [
     ImageCleanup, // Kích hoạt lại tool dọn dẹp ảnh
-    Home, // Kích hoạt lại Home global
     ContactInfo,
     FooterInfo,
     ContactCTA,
     FloatingButtons,
     SiteBranding,
+    Navigation,
+    Home,
   ],
   endpoints: [
     {

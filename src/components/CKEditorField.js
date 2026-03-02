@@ -279,7 +279,7 @@ const CKEditorFieldComponent = (props) => {
             ],
             shouldNotGroupWhenFull: true
           },
-          placeholder: 'Nhập nội dung...',
+          placeholder: props.admin?.placeholder || 'Nhập nội dung...',
           extraPlugins: [CustomUploadAdapterPlugin],
           // Cấu hình font size
           fontSize: {

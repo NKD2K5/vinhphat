@@ -177,9 +177,11 @@ async function processAuthorizationCode(code, state, path, req, res) {
     try {
       const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
         code,
-        client_id: '398534795337-370j22gken1h6of3vmbf5p2i12sakhml.apps.googleusercontent.com',
+        client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: 'http://localhost:3001/auth/google/callback',
+        redirect_uri: process.env.NEXT_PUBLIC_PAYLOAD_URL 
+          ? `${process.env.NEXT_PUBLIC_PAYLOAD_URL}/auth/google/callback`
+          : 'http://localhost:3001/auth/google/callback',
         grant_type: 'authorization_code'
       });
       

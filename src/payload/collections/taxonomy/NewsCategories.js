@@ -13,6 +13,16 @@ exports.NewsCategories = {
   access: {
     read: () => true,
   },
+  hooks: {
+    afterChange: [
+      ({ doc, req }) => {
+        console.log('=== DEBUG NewsCategories afterChange ===');
+        console.log('NewsCategories document created/updated:', doc);
+        console.log('Collection slug: news-categories');
+        return doc;
+      }
+    ]
+  },
   fields: [
     {
       name: 'name',

@@ -6,9 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CartItem, getCart, clearCart } from '@/utils/cart';
 
-const PhanDauTrang = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
-const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: false });
-
 function parsePrice(priceText: string): number {
   if (!priceText) return 0;
   const match = priceText.match(/[\d.,]+/);
@@ -150,8 +147,7 @@ export default function CheckoutPage() {
   if (!items.length && !success) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-        <PhanDauTrang />
-        <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-24 pb-16">
+        <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-16">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Giỏ hàng đang trống
@@ -167,7 +163,6 @@ export default function CheckoutPage() {
             </Link>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -175,8 +170,7 @@ export default function CheckoutPage() {
   if (success) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-        <PhanDauTrang />
-        <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-24 pb-16">
+        <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-16">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 text-center max-w-xl mx-auto">
             <div className="text-6xl mb-4">✅</div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -203,15 +197,13 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <PhanDauTrang />
-      <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-24 pb-16">
+      <div className="flex-1 container mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-16">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
           Thông Tin Đặt Hàng
         </h1>
@@ -344,7 +336,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

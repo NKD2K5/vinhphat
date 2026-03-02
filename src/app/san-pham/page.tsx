@@ -12,8 +12,6 @@ import { FaSearch, FaChevronRight } from 'react-icons/fa';
 import { Eye } from 'lucide-react';
 import ProductModal, { ProductData } from '@/components/ProductModal';
 
-const PhanDauTrang = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
-const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: false });
 const RecentlyViewed = dynamic(() => import('@/components/RecentlyViewed/RecentlyViewed'), { ssr: false });
 
 interface Product {
@@ -131,7 +129,7 @@ function ProductsContent() {
   // Set search query from URL
   useEffect(() => {
     if (searchFromUrl) {
-      setSearchQuery(searchFromUrl);
+      setSearchQuery(searchFromUrl.trim());
       setCurrentPage(1);
     }
   }, [searchFromUrl]);
@@ -206,7 +204,10 @@ function ProductsContent() {
           productsQuery += `&where[service][equals]=${selectedCategory}`;
         }
         if (searchQuery) {
-          productsQuery += `&where[name][contains]=${encodeURIComponent(searchQuery)}`;
+          const trimmedQuery = searchQuery.trim();
+          if (trimmedQuery) {
+            productsQuery += `&where[name][contains]=${encodeURIComponent(trimmedQuery)}`;
+          }
         }
         
         const response = await fetch(productsQuery, { 
@@ -272,11 +273,23 @@ function ProductsContent() {
         <meta name="twitter:description" content={metaDescription} />
       </Head>
       
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <PhanDauTrang />
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+
+        {/* Hero Section with Gradient Background */}
+        <section className="relative pt-20 pb-16 md:pt-24 md:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-800 dark:to-blue-900">
+          <div className="absolute inset-0 bg-black opacity-10"></div>
+          <div className="relative max-w-7xl mx-auto text-center">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+              Sản Phẩm In Ấn Chuyên Nghiệp
+            </h1>
+            <p className="text-lg md:text-xl text-blue-100 max-w-3xl mx-auto">
+              Khám phá các giải pháp in ấn chất lượng cao tại VinhPhat Printing. In Offset, In Decal, In Tem Nhãn, In Bao Bì với giá cạnh tranh.
+            </p>
+          </div>
+        </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 md:px-8 lg:px-16 py-12 pt-24">
+      <div className="flex-grow container mx-auto px-4 md:px-8 lg:px-16 py-8">
         <div className="grid lg:grid-cols-4 gap-8">
           {/* Sidebar - Categories */}
           <aside className="lg:col-span-1">
@@ -352,18 +365,6 @@ function ProductsContent() {
 
           {/* Products Grid */}
           <main className="lg:col-span-3">
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                {selectedCategory === 'all' 
-                  ? 'Tất Cả Sản Phẩm' 
-                  : categories.find(c => c.id === selectedCategory)?.name || 'Sản Phẩm'}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                Hiển thị {((currentPage - 1) * productsPerPage) + 1} - {Math.min(currentPage * productsPerPage, totalDocs)} trong tổng số {totalDocs} sản phẩm
-              </p>
-            </div>
-
             {/* Loading Indicator */}
             {loading && (
               <div className="text-center py-12">
@@ -432,16 +433,38 @@ function ProductsContent() {
               </div>
             ) : null}
 
-            {/* Empty State */}
-            {!loading && filteredProducts.length === 0 && (
-              <div className="text-center py-20">
-                <div className="text-6xl mb-4">📦</div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  Không tìm thấy sản phẩm
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Thử tìm kiếm với từ khóa khác hoặc chọn danh mục khác
-                </p>
+            {/* No Products Message */}
+            {products.length === 0 && !loading && (
+              <div className="col-span-full text-center py-16">
+                <div className="max-w-md mx-auto">
+                  <div className="w-24 h-24 mx-auto mb-6 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <FaSearch className="w-12 h-12 text-gray-400 dark:text-gray-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                    {searchQuery ? `Không tìm thấy sản phẩm cho "${searchQuery}"` : 'Không tìm thấy sản phẩm'}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-8">
+                    {searchQuery 
+                      ? `Không có sản phẩm nào chứa từ khóa "${searchQuery}". Thử tìm kiếm với từ khóa khác hoặc chọn danh mục sản phẩm bên dưới.`
+                      : 'Danh mục này hiện chưa có sản phẩm. Thử chọn danh mục khác hoặc quay lại sau.'
+                    }
+                  </p>
+                  
+                  {/* Clear search button if searching */}
+                  {searchQuery && (
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setCurrentPage(1);
+                        router.push('/san-pham');
+                      }}
+                      className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
+                    >
+                      <FaSearch className="w-5 h-5 mr-2" />
+                      Xóa tìm kiếm
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
@@ -511,10 +534,7 @@ function ProductsContent() {
         </div>
       </div>
 
-      <Footer />
-
-      {/* Recently Viewed Products - Fixed Sidebar */}
-      <RecentlyViewed />
+            <RecentlyViewed />
 
       {/* Product Modal */}
       {selectedProduct && (

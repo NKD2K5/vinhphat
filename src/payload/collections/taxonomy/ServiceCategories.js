@@ -1,4 +1,5 @@
 const ImageUploadField = require('../../../components/ImageUploadField');
+const CKEditorField = require('../../../components/CKEditorField');
 
 const ServiceCategories = {
   slug: 'service-categories',
@@ -37,18 +38,15 @@ const ServiceCategories = {
       type: 'textarea',
       label: 'Mô Tả',
       admin: {
-        description: 'Mô tả ngắn về danh mục dịch vụ',
+        description: 'Mô tả chi tiết về danh mục dịch vụ',
       },
     },
     {
       name: 'image',
       type: 'text',
-      label: 'Hình Ảnh',
+      label: 'Hình Ảnh (URL)',
       admin: {
-        components: {
-          Field: ImageUploadField,
-        },
-        description: 'Upload ảnh qua C# API (khuyến nghị: 400x300px)',
+        description: 'Nhập URL ảnh (khuyến nghị: 400x300px)',
       },
     },
     {

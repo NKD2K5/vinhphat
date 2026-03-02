@@ -73,31 +73,6 @@ const LogoHistory = {
       },
     },
     {
-      name: 'dimensions',
-      type: 'group',
-      label: 'Kích thước Hiển thị',
-      admin: {
-        readOnly: true,
-      },
-      fields: [
-        {
-          name: 'width',
-          type: 'number',
-          label: 'Chiều rộng (px)',
-        },
-        {
-          name: 'height',
-          type: 'number',
-          label: 'Chiều cao (px)',
-        },
-        {
-          name: 'displayMode',
-          type: 'text',
-          label: 'Chế độ hiển thị',
-        },
-      ],
-    },
-    {
       name: 'changedBy',
       type: 'relationship',
       label: 'Người thay đổi',

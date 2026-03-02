@@ -49,6 +49,26 @@ exports.News = {
       label: 'Danh Mục',
       relationTo: 'news-categories',
       required: true,
+      admin: {
+        description: 'DEBUG: Đảm bảo chọn từ Danh Mục Tin Tức (news-categories), không phải Danh Mục Dịch Vụ',
+      },
+      hooks: {
+        beforeChange: [
+          ({ value, operation, req }) => {
+            console.log('=== DEBUG News Category ===');
+            console.log('Operation:', operation);
+            console.log('Category value:', value);
+            console.log('RelationTo should be: news-categories');
+            
+            // Kiểm tra nếu value là object và có collection info
+            if (value && typeof value === 'object') {
+              console.log('Category object:', JSON.stringify(value, null, 2));
+            }
+            
+            return value;
+          }
+        ]
+      }
     },
     {
       name: 'excerpt',

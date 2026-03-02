@@ -14,6 +14,13 @@ const nextConfig = withPWA({
   poweredByHeader: false,
   turbopack: {}, // Add empty turbopack config
   
+  // Bỏ static export để chạy được API routes
+  // output: 'export',
+  // trailingSlash: true,
+  images: {
+    unoptimized: true, // Required for static export
+  },
+  
   // Tắt Turbopack vì không tương thích với Payload CMS v2
   // Sử dụng Webpack thay thế
   
@@ -24,45 +31,40 @@ const nextConfig = withPWA({
     } : false,
   },
   
-  // Image optimization configuration
-  images: {
-    unoptimized: true, // Bật tối ưu hình ảnh
-    formats: ['image/webp', 'image/avif'],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    domains: [
-      'res.cloudinary.com',
-      'localhost',
-      'placehold.co'
-    ],
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '3001',
-        pathname: '/media/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'http',
-        hostname: 'res.cloudinary.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
-  },
+  // Image optimization configuration (disabled for static export)
+  // images: {
+  //   unoptimized: true, // Bật tối ưu hình ảnh
+  //   formats: ['image/webp', 'image/avif'],
+  //   deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+  //   imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  //   remotePatterns: [
+  //     {
+  //       protocol: 'http',
+  //       hostname: 'localhost',
+  //       port: '3001',
+  //       pathname: '/media/**',
+  //     },
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'res.cloudinary.com',
+  //       pathname: '/**',
+  //     },
+  //     {
+  //       protocol: 'http',
+  //       hostname: 'res.cloudinary.com',
+  //       pathname: '/**',
+  //     },
+  //     {
+  //       protocol: 'https',
+  //       hostname: 'placehold.co',
+  //       pathname: '/**',
+  //     },
+  //     {
+  //       protocol: 'https',
+  //       hostname: '**',
+  //     },
+  //   ],
+  // },
   
   // Enable etag generation for better caching
   generateEtags: true,
@@ -89,11 +91,19 @@ const nextConfig = withPWA({
       },
       {
         // No cache for main pages in development
-        source: '/(page\\.tsx|dich-vu|san-pham|tin-tuc)',
+        source: '/(page\\.tsx|dich-vu|san-pham|tin-tuc|contact|about|checkout|gio-hang|ve-chung-toi)',
         headers: [
           {
             key: 'Cache-Control',
             value: 'no-cache, no-store, must-revalidate',
+          },
+          {
+            key: 'Pragma',
+            value: 'no-cache',
+          },
+          {
+            key: 'Expires',
+            value: '0',
           },
         ],
       },

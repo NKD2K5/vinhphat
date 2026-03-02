@@ -55,24 +55,23 @@ const Hero = () => {
           {/* Left side - Content */}
           <div className="lg:w-1/2 mb-12 lg:mb-0 lg:pr-12">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-              Giải Pháp In Ấn Chuyên Nghiệp Cho Mọi Nhu Cầu
+              Giải Pháp In Ấn Chuyên Nghiệp
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              VinhPhat Printing - Đối tác đáng tin cậy của bạn cho các dịch vụ in ấn chất lượng cao. 
-              Chúng tôi hiện thực hóa ý tưởng của bạn với độ chính xác và xuất sắc.
+              Chất lượng cao - Giá cạnh tranh - Giao hàng nhanh chóng
             </p>
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Link 
-                href="/lien-he" 
+                href="/san-pham" 
                 className="bg-white text-blue-700 hover:bg-blue-50 font-semibold py-3 px-8 rounded-lg text-lg text-center transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                Nhận Báo Giá Ngay
+                Xem Sản Phẩm
               </Link>
               <Link 
-                href="/dich-vu" 
+                href="/lien-he" 
                 className="border-2 border-white text-white hover:bg-white hover:bg-opacity-10 font-semibold py-3 px-8 rounded-lg text-lg text-center transition-all duration-300"
               >
-                Dịch Vụ Của Chúng Tôi
+                Liên Hệ Ngay
               </Link>
             </div>
             

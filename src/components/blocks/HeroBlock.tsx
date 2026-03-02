@@ -7,7 +7,14 @@ const PAYLOAD_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:300
 
 const toPlainText = (value: any): string => {
   if (!value) return '';
-  if (typeof value === 'string') return value;
+  
+  // Handle HTML strings by removing tags
+  if (typeof value === 'string') {
+    // Remove HTML tags
+    const plainText = value.replace(/<[^>]*>/g, '').trim();
+    return plainText;
+  }
+  
   if (Array.isArray(value)) {
     return value
       .map((n: any) => {
@@ -17,6 +24,7 @@ const toPlainText = (value: any): string => {
       })
       .join('');
   }
+  
   if (typeof value === 'object') {
     if (value.text) return value.text;
     if (value.children) return toPlainText(value.children);
@@ -24,6 +32,7 @@ const toPlainText = (value: any): string => {
     if (value.description) return toPlainText(value.description);
     if (value.title) return String(value.title);
   }
+  
   return '';
 };
 
@@ -142,7 +151,7 @@ export function HeroBlock({ data }: HeroBlockProps) {
   // Show fallback if no data or no slides - AFTER hooks are called
   if (!data || slides.length === 0) {
     return (
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white">
+      <section className="hidden md:flex relative min-h-screen items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 text-white">
         <div className="text-center p-8 rounded-xl bg-white/10 backdrop-blur-sm">
           <h1 className="text-4xl font-bold mb-4">Chưa có banner</h1>
           <p className="text-lg mb-6">Vui lòng thêm slides trong Admin Panel</p>
@@ -172,7 +181,7 @@ export function HeroBlock({ data }: HeroBlockProps) {
   const secondary = currentSlideData.secondaryCTA || currentSlideData.secondaryButton;
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center text-white overflow-hidden">
+    <section className="hidden md:flex relative min-h-screen items-center justify-center text-white overflow-hidden">
       {/* Background - Base layer */}
       <div 
         className="absolute inset-0 z-0 transition-all duration-1000"

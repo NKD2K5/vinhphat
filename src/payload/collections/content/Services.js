@@ -2,7 +2,7 @@ const CKEditorField = require('../../../components/CKEditorFieldSafe');
 const ImageUploadField = require('../../../components/ImageUploadField');
 const { buildCollectionHooks } = require('../../../../payload/hooks/logrocket');
 
-const Services = {
+exports.Services = {
   slug: 'service-items',
   labels: {
     singular: 'Dịch Vụ',
@@ -47,10 +47,13 @@ const Services = {
     },
     {
       name: 'description',
-      type: 'textarea',
+      type: 'text',
       label: 'Mô Tả Ngắn',
       admin: {
-        description: '1-2 câu mô tả ngắn gọn về dịch vụ',
+        components: {
+          Field: CKEditorField,
+        },
+        description: '1-2 câu mô tả ngắn gọn về dịch vụ (hỗ trợ định dạng văn bản)',
       },
     },
     {
@@ -164,4 +167,4 @@ const Services = {
   ],
 };
 
-module.exports = { Services };
+// Use named export like other collections

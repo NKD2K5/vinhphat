@@ -6,8 +6,6 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 
-const PhanDauTrang = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
-const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: false });
 const ContactCTA = dynamic(() => import('@/components/ContactCTA/ContactCTA'), { ssr: false });
 
 interface TeamMember {
@@ -183,33 +181,32 @@ export default function AboutUsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <PhanDauTrang />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
+      <section className="relative pt-20 pb-20 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-cyan-600">
         {/* Background decoration */}
-        <div className="absolute inset-0 opacity-5 dark:opacity-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-300 rounded-full blur-3xl"></div>
         </div>
 
         <div className="container mx-auto px-4 md:px-8 lg:px-16 relative z-10">
           <div className="text-center max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-gray-900 dark:text-white mb-8 leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-8 leading-tight">
               {aboutData?.hero?.heading ? (
                 <>
                   {aboutData.hero.heading.split(' ').slice(0, -2).join(' ')}{' '}
-                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="text-white">
                     {aboutData.hero.heading.split(' ').slice(-2).join(' ')}
                   </span>
                 </>
               ) : (
                 <>
-                  Về <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VinhPhat Printing</span>
+                  Về <span className="text-white">VinhPhat Printing</span>
                 </>
               )}
             </h1>
-            <p className="text-2xl md:text-3xl lg:text-4xl text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+            <p className="text-2xl md:text-3xl lg:text-4xl text-white leading-relaxed font-medium">
               {aboutData?.hero?.subheading || 'Đối tác in ấn đáng tin cậy với hơn 15 năm kinh nghiệm'}
             </p>
           </div>
@@ -236,14 +233,14 @@ export default function AboutUsPage() {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-8">
                 {aboutData?.companyStory?.heading || 'Câu Chuyện Thành Lập'}
               </h2>
-              <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed text-lg md:text-xl lg:text-2xl prose prose-lg dark:prose-invert max-w-none">
+              <div className="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed text-lg md:text-xl lg:text-2xl prose prose-lg dark:prose-invert max-w-none break-words">
                 {aboutData?.companyStory?.content ? (
-                  <div dangerouslySetInnerHTML={{ __html: renderRichText(aboutData.companyStory.content) }} />
+                  <div className="break-words" dangerouslySetInnerHTML={{ __html: renderRichText(aboutData.companyStory.content) }} />
                 ) : (
                   <>
-                    <p className="leading-relaxed">Được thành lập vào năm 2009, VinhPhat Printing bắt đầu từ một xưởng in nhỏ với niềm đam mê mang đến những sản phẩm in ấn chất lượng cao cho khách hàng Việt Nam.</p>
-                    <p className="leading-relaxed">Qua hơn 15 năm phát triển, chúng tôi đã trở thành một trong những đơn vị tiên phong trong lĩnh vực in ấn kỹ thuật số và in offset, phục vụ hàng ngàn khách hàng từ doanh nghiệp nhỏ đến tập đoàn lớn.</p>
-                    <p className="leading-relaxed">Với đội ngũ hơn 50 nhân viên chuyên nghiệp và hệ thống máy móc hiện đại nhập khẩu từ Đức và Nhật Bản, chúng tôi cam kết mang đến sản phẩm đạt tiêu chuẩn quốc tế.</p>
+                    <p className="leading-relaxed break-words">Được thành lập vào năm 2009, VinhPhat Printing bắt đầu từ một xưởng in nhỏ với niềm đam mê mang đến những sản phẩm in ấn chất lượng cao cho khách hàng Việt Nam.</p>
+                    <p className="leading-relaxed break-words">Qua hơn 15 năm phát triển, chúng tôi đã trở thành một trong những đơn vị tiên phong trong lĩnh vực in ấn kỹ thuật số và in offset, phục vụ hàng ngàn khách hàng từ doanh nghiệp nhỏ đến tập đoàn lớn.</p>
+                    <p className="leading-relaxed break-words">Với đội ngũ hơn 50 nhân viên chuyên nghiệp và hệ thống máy móc hiện đại nhập khẩu từ Đức và Nhật Bản, chúng tôi cam kết mang đến sản phẩm đạt tiêu chuẩn quốc tế.</p>
                   </>
                 )}
               </div>
@@ -562,7 +559,6 @@ export default function AboutUsPage() {
       {/* Contact CTA */}
       <ContactCTA />
 
-      <Footer />
     </div>
   );
 }

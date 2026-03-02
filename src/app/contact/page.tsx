@@ -3,13 +3,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { FiMapPin, FiMail, FiPhone, FiClock, FiUpload, FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
-import { MessageCircle, MessageSquareText } from 'lucide-react';
 import { FaFacebook } from 'react-icons/fa';
 import { SiZalo } from 'react-icons/si';
 import dynamic from 'next/dynamic';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-import PhanDauTrang from '@/app/components/PhanDauTrang/PhanDauTrang';
-import Footer from '@/app/components/Footer/Footer';
+import ContactCTA from '@/components/ContactCTA/ContactCTA';
 
 // Custom motion components with simplified animation
 const Motion = {
@@ -154,6 +152,29 @@ function ContactPage() {
     setIsClient(true);
   }, []);
 
+  useEffect(() => {
+    const fetchContactInfo = async () => {
+      try {
+        const response = await fetch('/api/contact-info');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success) {
+            setContactData(prev => ({
+              ...prev,
+              ...data.data
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching contact info:', error);
+      }
+    };
+
+    if (isClient) {
+      fetchContactInfo();
+    }
+  }, [isClient]);
+
   // Clean up object URL when component unmounts or previewImage changes
   useEffect(() => {
     return () => {
@@ -177,30 +198,6 @@ function ContactPage() {
   } = useForm<FormData>();
 
   const file = watch('file');
-
-  // Fetch contact info from API
-  useEffect(() => {
-    const fetchContactInfo = async () => {
-      try {
-        const response = await fetch('/api/contact-info');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success) {
-            setContactData(prev => ({
-              ...prev,
-              ...data.data
-            }));
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching contact info:', error);
-      }
-    };
-
-    if (isClient) {
-      fetchContactInfo();
-    }
-  }, [isClient]);
 
   // Show loading state on server-side rendering
   if (!isClient) {
@@ -332,11 +329,10 @@ function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      <PhanDauTrang />
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative py-20 md:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-800 dark:to-blue-900">
+        <section className="relative py-20 md:py-28 pt-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 dark:from-blue-900 dark:via-blue-800 dark:to-blue-900">
           <div className="absolute inset-0 bg-black opacity-10"></div>
           <div className="relative max-w-7xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
@@ -716,38 +712,15 @@ function ContactPage() {
 
           {/* Additional Info Section */}
           <AnimatedSection 
-            className="mt-12 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700 p-8 rounded-xl shadow-lg"
+            className="mt-12"
             delay={0.5}
           >
-            <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Cần Hỗ Trợ Ngay?
-              </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Đội ngũ chăm sóc khách hàng của chúng tôi luôn sẵn sàng hỗ trợ bạn 24/7
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <a
-                  href={`tel:${contactData.phone}`}
-                  className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
-                >
-                  <FiPhone className="w-5 h-5 mr-2" />
-                  Gọi ngay: {contactData.phone}
-                </a>
-                <a
-                  href={`mailto:${contactData.email}`}
-                  className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors shadow-md border border-blue-200 dark:border-gray-600"
-                >
-                  <FiMail className="w-5 h-5 mr-2" />
-                  Gửi email
-                </a>
-              </div>
-            </div>
+            <ContactCTA showOnContactPage />
           </AnimatedSection>
+
         </div>
       </main>
 
-      <Footer />
       <RecentlyViewed />
     </div>
   );

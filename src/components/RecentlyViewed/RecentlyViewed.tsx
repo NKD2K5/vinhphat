@@ -1,31 +1,79 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getRecentlyViewed, type RecentlyViewedProduct } from '@/utils/recentlyViewed';
 import { FaClock, FaTimes, FaChevronRight } from 'react-icons/fa';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
-const RecentlyViewed: React.FC = () => {
+// Define interface locally to avoid import issues
+interface RecentlyViewedProduct {
+  id: string;
+  slug: string;
+  name: string;
+  image: string;
+  price: string;
+  viewedAt: number;
+}
+
+// Local implementation to avoid import issues
+const getRecentlyViewed = (): RecentlyViewedProduct[] => {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const STORAGE_KEY = 'vinhphat_recently_viewed';
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return [];
+    
+    const items = JSON.parse(stored) as RecentlyViewedProduct[];
+    
+    // Filter out items older than 1 day
+    const expiryTime = Date.now() - (1 * 24 * 60 * 60 * 1000);
+    const filtered = items.filter(item => item.viewedAt > expiryTime);
+    
+    // Update storage if items were filtered
+    if (filtered.length !== items.length) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    }
+    
+    return filtered;
+  } catch (error) {
+    console.error('Error reading recently viewed:', error);
+    return [];
+  }
+};
+
+const RecentlyViewedContent: React.FC = () => {
   const [products, setProducts] = useState<RecentlyViewedProduct[]>([]);
   const [mounted, setMounted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    // Load recently viewed products
-    const recentProducts = getRecentlyViewed();
-    setProducts(recentProducts);
+    try {
+      setMounted(true);
+      // Load recently viewed products
+      const recentProducts = getRecentlyViewed();
+      if (recentProducts && Array.isArray(recentProducts)) {
+        setProducts(recentProducts);
+      } else {
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error('Error in RecentlyViewed component:', error);
+      setHasError(true);
+      setProducts([]);
+    }
   }, []);
 
+  // Show only first 3 products when collapsed
+  const displayProducts = isExpanded ? (products || []) : (products || []).slice(0, 3);
+
   // Don't render on server to avoid hydration mismatch
-  if (!mounted || products.length === 0) {
+  if (!mounted || hasError || !products || products.length === 0) {
     return null;
   }
-
-  // Show only first 3 products when collapsed
-  const displayProducts = isExpanded ? products : products.slice(0, 3);
 
   if (isMinimized) {
     return (
@@ -106,6 +154,17 @@ const RecentlyViewed: React.FC = () => {
         </div>
       )}
     </div>
+  );
+};
+
+// Main component with Error Boundary
+const RecentlyViewed: React.FC = () => {
+  return (
+    <ErrorBoundary fallback={null}>
+      <Suspense fallback={null}>
+        <RecentlyViewedContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 

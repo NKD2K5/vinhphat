@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import PhanDauTrang from '../components/PhanDauTrang/PhanDauTrang';
+import Footer from '../components/Footer/Footer';
 
 export default function ClientLayout({
   children,
@@ -55,8 +57,12 @@ export default function ClientLayout({
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">
-      {children}
+    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col">
+      <PhanDauTrang />
+      <main className="flex-grow pt-16">
+        {children}
+      </main>
+      <Footer />
     </div>
   );
 }

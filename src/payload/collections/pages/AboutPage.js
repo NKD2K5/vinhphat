@@ -16,12 +16,9 @@ exports.AboutPage = {
   admin: {
     useAsTitle: 'title',
     group: 'Trang',
-    // Tắt nút Preview mặc định để chỉ sử dụng inline preview
-    // preview: (doc) => {
-    //   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
-    //   const previewSecret = process.env.PAYLOAD_PREVIEW_SECRET || 'preview-secret';
-    //   return `${baseUrl}/api/preview?secret=${previewSecret}&collection=about-page&slug=${doc.slug || 'gioi-thieu'}`;
-    // },
+    hidden: false, // Đảm bảo không bị ẩn
+    // Thêm vào menu để dễ thấy
+    defaultColumns: ['title', 'slug'],
   },
   access: {
     read: () => true,

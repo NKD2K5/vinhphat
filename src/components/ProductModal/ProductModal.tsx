@@ -217,9 +217,10 @@ const ProductInfo: React.FC<{
       {/* Description */}
       {product.description && (
         <div className="mb-6">
-          <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-            {product.description}
-          </p>
+          <div 
+            className="text-gray-700 dark:text-gray-300 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
         </div>
       )}
 

@@ -1,4 +1,4 @@
-const ImageUploadField = require('../../components/ImageUploadField');
+const ImageUploadField = require('../../../components/ImageUploadField');
 
 exports.TestimonialsBlock = {
   slug: 'testimonials',

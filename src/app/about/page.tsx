@@ -4,10 +4,6 @@ import ServicesOverview from '../components/About/ServicesOverview';
 import CoreTeam from '../components/About/CoreTeam';
 import Values from '../components/About/Values';
 
-// Dynamically import Header and Footer to avoid SSR issues
-const Header = dynamic(() => import('../components/PhanDauTrang/PhanDauTrang'), { ssr: true });
-const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: true });
-
 export const metadata = {
   title: 'Về Chúng Tôi - Công Ty In Ấn Vinh Phát',
   description: 'Tìm hiểu về Công Ty In Ấn Vinh Phát - Đơn vị chuyên cung cấp các dịch vụ in ấn chất lượng cao, uy tín hàng đầu tại Việt Nam.',
@@ -16,8 +12,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
         <Hero />
       <section className="py-16">
         <div className="w-full">
@@ -70,7 +65,6 @@ export default function AboutPage() {
         </div>
       </section>
       </main>
-      <Footer />
     </div>
   );
 }

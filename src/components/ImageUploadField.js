@@ -4,16 +4,21 @@
 const React = require('react');
 const { useState, useCallback } = React;
 
+// Load useField from Payload once at module init to keep hook order stable
+let payloadUseField;
+try {
+  payloadUseField = require('payload/components/forms').useField;
+} catch (err) {
+  payloadUseField = null;
+}
+
 const ImageUploadField = (props) => {
-  // Load useField hook from Payload
-  let useFieldHook;
-  let field = null;
-  try {
-    useFieldHook = require('payload/components/forms').useField;
-    field = useFieldHook({ path: props.path });
-  } catch (err) {
-    console.error('Failed to load useField:', err);
-  }
+  // Keep hook call order stable: always call a function here.
+  const useFieldFn = payloadUseField || function({ path }) {
+    const [value, setValue] = useState('');
+    return { value, setValue };
+  };
+  const field = useFieldFn({ path: props.path });
 
   const value = field?.value || '';
   const setValue = field?.setValue;
@@ -206,3 +211,4 @@ const ImageUploadField = (props) => {
 };
 
 module.exports = ImageUploadField;
+module.exports.default = ImageUploadField;

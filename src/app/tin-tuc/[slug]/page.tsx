@@ -9,9 +9,6 @@ import { Calendar, User, Clock, Eye, Heart, Share2, Facebook, Twitter, Linkedin,
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import './article-content.css';
 
-const PhanDauTrang = dynamic(() => import('../../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
-const Footer = dynamic(() => import('../../components/Footer/Footer'), { ssr: false });
-
 interface NewsArticle {
   id: string;
   title: string;
@@ -198,7 +195,6 @@ export default function NewsDetailPage() {
   if (notFound || !article) {
     return (
       <>
-        <PhanDauTrang />
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
           <div className="text-center">
             <h1 className="text-6xl font-bold text-gray-300 dark:text-gray-700 mb-4">404</h1>
@@ -211,17 +207,14 @@ export default function NewsDetailPage() {
             </Link>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
 
   return (
     <>
-      <PhanDauTrang />
-
       {/* Breadcrumb */}
-      <div className="bg-gray-100 dark:bg-gray-800 py-4">
+      <div className="bg-gray-100 dark:bg-gray-800 py-4 pt-20">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -402,7 +395,6 @@ export default function NewsDetailPage() {
         </div>
       </article>
 
-      <Footer />
     </>
   );
 }

@@ -1,18 +1,19 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FiMenu, FiX } from 'react-icons/fi';
+import { FiMenu, FiX, FiShoppingCart } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
 import Logo from '@/components/Logo/Logo';
+import { useTheme } from 'next-themes';
 
 // Dynamically import ThemeToggle to avoid SSR issues
 const ThemeToggle = dynamic(() => import('../ThemeToggle/ThemeToggle'), { ssr: false });
 
 const Header = () => {
+  const { resolvedTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,31 +24,16 @@ const Header = () => {
       setIsMobile(window.innerWidth < 768);
     };
 
-    // Check for dark theme
-    const checkDarkTheme = () => {
-      const isDark = document.documentElement.classList.contains('dark') ||
-                     document.body.classList.contains('dark') ||
-                     window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkTheme(isDark);
-    };
-
     // Initial checks
     handleScroll();
     handleResize();
-    checkDarkTheme();
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     
-    // Listen for theme changes
-    const observer = new MutationObserver(checkDarkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
-      observer.disconnect();
     };
   }, []);
 
@@ -68,46 +54,75 @@ const Header = () => {
       }`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between gap-4">
+        <div className={`relative flex items-center justify-between gap-4 ${isMobile ? 'h-16' : ''}`}>
           
-          {/* Logo */}
-          <div className={`flex-shrink-0 transition-all duration-300 ${
-            isScrolled ? 'scale-90' : 'scale-100'
-          }`}>
-            <Logo 
-              isMobile={isMobile} 
-              isScrolled={isScrolled} 
-              isDarkBackground={isDarkTheme} 
-            />
-          </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.href} 
-                href={link.href}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-200"
+          {/* Mobile Layout: Hamburger on left, Logo center (absolute), Cart on right */}
+          {isMobile && (
+            <>
+              {/* Hamburger Menu - Left */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none transition-colors duration-200 z-10"
+                aria-label="Toggle menu"
               >
-                {link.name}
-              </Link>
-            ))}
-            <div className="ml-4">
-              <ThemeToggle />
-            </div>
-          </nav>
+                {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+              </button>
 
-          {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center gap-3">
-            <ThemeToggle />
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none transition-colors duration-200"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-            </button>
-          </div>
+              {/* Logo - Absolutely Centered */}
+              <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center">
+                <Logo 
+                  isMobile={true} 
+                  isScrolled={isScrolled} 
+                  theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+                />
+              </div>
+
+              {/* Shopping Cart - Right */}
+              <button
+                className="p-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none transition-colors duration-200 z-10"
+                aria-label="Shopping cart"
+              >
+                <FiShoppingCart size={24} />
+              </button>
+            </>
+          )}
+
+          {/* Desktop Layout: Logo on left, Navigation center, Theme toggle on right */}
+          {!isMobile && (
+            <>
+              {/* Logo */}
+              <div className={`flex-shrink-0 transition-all duration-300 ${
+                isScrolled ? 'scale-90' : 'scale-100'
+              }`}>
+                <Logo 
+                  isMobile={false} 
+                  isScrolled={isScrolled} 
+                  theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+                />
+              </div>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center space-x-8">
+                {navLinks.map((link) => (
+                  <Link 
+                    key={link.href} 
+                    href={link.href}
+                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors duration-200"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                <div className="ml-4">
+                  <ThemeToggle />
+                </div>
+              </nav>
+
+              {/* Desktop Theme Toggle */}
+              <div className="hidden lg:flex items-center">
+                <ThemeToggle />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu */}
@@ -124,6 +139,9 @@ const Header = () => {
                   {link.name}
                 </Link>
               ))}
+              <div className="px-4 py-3">
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         )}

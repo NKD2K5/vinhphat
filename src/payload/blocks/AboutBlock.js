@@ -1,5 +1,5 @@
 const CKEditorField = require('../../components/CKEditorFieldSafe');
-const ImageUploadField = require('../../components/ImageUploadField');
+const ImageUploadField = require('../../../components/ImageUploadField');
 
 exports.AboutBlock = {
   slug: 'aboutBlock',

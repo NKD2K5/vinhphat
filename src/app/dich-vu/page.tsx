@@ -5,9 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-import PhanDauTrang from '@/app/components/PhanDauTrang/PhanDauTrang';
 
-const Footer = dynamic(() => import('../components/Footer/Footer'), { ssr: false });
 const ContactCTA = dynamic(() => import('../../components/ContactCTA/ContactCTA'), { ssr: false });
 
 // Types
@@ -84,7 +82,6 @@ export default function ServicesPage() {
   if (categories.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <PhanDauTrang />
         <div className="container mx-auto px-4 py-20 text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Chưa có dữ liệu dịch vụ
@@ -96,15 +93,12 @@ export default function ServicesPage() {
             npm run seed:services
           </code>
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <PhanDauTrang />
-      
       {/* Page Header */}
       <section className="relative py-20 md:py-24 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 dark:from-blue-800 dark:via-blue-900 dark:to-gray-900 overflow-hidden">
         {/* Background decoration */}
@@ -203,9 +197,12 @@ export default function ServicesPage() {
                     {subcategory.name}
                   </h3>
                   {subcategory.description && (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4">
-                      {subcategory.description}
-                    </p>
+                    <p 
+                      className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed line-clamp-2 mb-4"
+                      dangerouslySetInnerHTML={{ 
+                        __html: subcategory.description.replace(/<[^>]*>/g, '') 
+                      }}
+                    />
                   )}
                   
                   {/* Action Button */}
@@ -230,8 +227,6 @@ export default function ServicesPage() {
 
       {/* Contact CTA Section */}
       <ContactCTA />
-
-      <Footer />
 
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {

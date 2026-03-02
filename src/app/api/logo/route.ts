@@ -51,9 +51,12 @@ function generateFilename(originalName: string): string {
 // GET - Fetch current logo
 export async function GET() {
   try {
-    const response = await fetch(`${PAYLOAD_URL}/api/globals/site-branding`, {
+    const response = await fetch(`${PAYLOAD_URL}/api/globals/site-branding?t=${Date.now()}`, {
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
       cache: 'no-store',
     });
@@ -63,10 +66,41 @@ export async function GET() {
     }
 
     const data = await response.json();
+    console.log('Raw Payload data:', JSON.stringify(data, null, 2));
+    
+    // Transform Payload CMS data to expected format
+    const transformedData = {
+      logo: {
+        imageUrl: data.logo?.primary || '',
+        imageUrlDark: '', // không còn logo phụ
+        alt: 'VinhPhat Printing Logo',
+        displayMode: 'auto',
+        width: 200,
+        height: 56,
+        maxWidth: 200,
+        maxHeight: 56,
+      },
+      logoMobile: {
+        enabled: !!data.logo?.mobileLogo,
+        imageUrl: data.logo?.mobileLogo || '',
+        imageUrlDark: '',
+        width: 160,
+        height: 48,
+        customWidth: 140,
+        customHeight: 42,
+      },
+      siteInfo: {
+        siteName: data.siteName || 'VinhPhat Printing',
+        tagline: data.siteDescription || 'Dịch vụ in ấn chuyên nghiệp',
+        description: data.siteDescription || 'VinhPhat Printing - Chuyên cung cấp các dịch vụ in ấn chất lượng cao với hơn 15 năm kinh nghiệm trong ngành.',
+      },
+    };
+    
+    console.log('Transformed data:', JSON.stringify(transformedData, null, 2));
     
     return NextResponse.json({
       success: true,
-      data,
+      data: transformedData,
     });
   } catch (error) {
     console.error('Error fetching logo:', error);

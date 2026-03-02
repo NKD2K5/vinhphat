@@ -10,19 +10,11 @@ interface LogoData {
     imageUrlDark?: string; // Thêm trường cho logo nền đen
     alt: string;
     displayMode: string;
-    width?: number;
-    height?: number;
-    maxWidth?: number;
-    maxHeight?: number;
   };
   logoMobile: {
     enabled: boolean;
     imageUrl?: string;
     imageUrlDark?: string; // Thêm trường cho logo mobile nền đen
-    width?: number;
-    height?: number;
-    customWidth?: number;
-    customHeight?: number;
   };
   siteInfo: {
     siteName: string;
@@ -260,10 +252,6 @@ const LogoManagement = () => {
       const settings = {
         alt: altText,
         displayMode: logoData?.logo?.displayMode || 'auto',
-        width: logoData?.logo?.width,
-        height: logoData?.logo?.height,
-        maxWidth: logoData?.logo?.maxWidth,
-        maxHeight: logoData?.logo?.maxHeight,
       };
 
       const result = await updateLogoSettings(settings);

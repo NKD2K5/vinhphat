@@ -6,7 +6,8 @@ export async function GET() {
   try {
     const response = await fetch(`${PAYLOAD_URL}/api/about-page?limit=1`, {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
       },
       cache: 'no-store',
     });
@@ -56,6 +57,35 @@ export async function GET() {
     
     const aboutPage = data.docs?.[0] || null;
 
+    // Transform layout blocks to expected format
+    let transformed = null;
+    if (aboutPage && aboutPage.layout) {
+      transformed = { ...aboutPage };
+      
+      // Extract blocks from layout
+      aboutPage.layout.forEach((block: any) => {
+        switch (block.blockType) {
+          case 'companyStory':
+            transformed.companyStory = {
+              heading: block.heading,
+              image: block.image,
+              content: block.content
+            };
+            break;
+          case 'missionVision':
+            transformed.mission = block.mission;
+            transformed.vision = block.vision;
+            break;
+          case 'coreValues':
+            transformed.coreValues = block.values;
+            break;
+          case 'achievements':
+            transformed.achievements = block.stats;
+            break;
+        }
+      });
+    }
+
     // If no data found, return fallback
     if (!aboutPage) {
       console.warn('No about page data found, using fallback');
@@ -86,7 +116,11 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      aboutPage: aboutPage,
+      aboutPage: transformed || aboutPage,
+    }, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
     });
   } catch (error) {
     console.error('Error fetching about page:', error);

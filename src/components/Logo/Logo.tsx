@@ -8,23 +8,13 @@ import Link from "next/link";
 
 interface LogoImage {
   imageUrl: string;
-  imageUrlDark?: string;
   alt?: string;
   displayMode?: "auto" | "fixed-width" | "fixed-height" | "fixed-both";
-  width?: number;
-  height?: number;
-  maxWidth?: number;
-  maxHeight?: number;
 }
 
 interface LogoMobile {
   enabled: boolean;
   imageUrl?: string;
-  imageUrlDark?: string;
-  width?: number;
-  height?: number;
-  customWidth?: number;
-  customHeight?: number;
 }
 
 interface LogoData {
@@ -48,80 +38,44 @@ interface LogoProps {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const DEFAULT_WIDTH = 200;
-const DEFAULT_HEIGHT = 72;
+// Desktop size - chỉnh số này để thay đổi kích thước logo desktop
+const DESKTOP_SIZE = 100;
+
+// Mobile size - chỉnh số này để thay đổi kích thước logo mobile
+const MOBILE_SIZE = 60;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Safely convert any value to a positive integer, or return fallback */
 function safeInt(value: unknown, fallback: number): number {
   const n = parseInt(String(value ?? ""), 10);
   return Number.isFinite(n) && n > 0 ? n : fallback;
 }
 
 function getContainerStyle(
-  logo: LogoImage,
-  mobile: LogoMobile,
   isMobile: boolean,
-  overrideWidth?: number,
-  overrideHeight?: number
+  isScrolled: boolean
 ): React.CSSProperties {
-  if (isMobile && mobile.enabled) {
-    const w = safeInt(overrideWidth ?? (mobile.customWidth ?? mobile.width), DEFAULT_WIDTH);
-    const h = safeInt(overrideHeight ?? (mobile.customHeight ?? mobile.height), DEFAULT_HEIGHT);
-    return { width: w, height: h, position: "relative" };
-  }
+  const size = isMobile ? MOBILE_SIZE : DESKTOP_SIZE;
+  const scale = isScrolled ? 0.85 : 1;
 
-  const mode = logo.displayMode ?? "auto";
-  const w = safeInt(overrideWidth ?? logo.width, DEFAULT_WIDTH);
-  const h = safeInt(overrideHeight ?? logo.height, DEFAULT_HEIGHT);
-  const mw = safeInt(overrideWidth ?? logo.maxWidth, DEFAULT_WIDTH);
-  const mh = safeInt(overrideHeight ?? logo.maxHeight, DEFAULT_HEIGHT);
-
-  switch (mode) {
-    case "fixed-width":
-      return { width: w, height: h, position: "relative" };
-    case "fixed-height":
-      return { width: w, height: h, position: "relative" };
-    case "fixed-both":
-      return { width: w, height: h, position: "relative" };
-    default:
-      return {
-        position: "relative",
-        width: isMobile ? 150 : mw,
-        height: mh,
-      };
-  }
+  return {
+    position: "relative",
+    width: `${Math.round(size * scale)}px`,
+    height: `${Math.round(size * scale)}px`,
+  };
 }
 
 function getImageDimensions(
-  logo: LogoImage,
-  mobile: LogoMobile,
   isMobile: boolean,
-  overrideWidth?: number,
-  overrideHeight?: number
+  isScrolled: boolean
 ): { width: number; height: number } {
-  if (isMobile && mobile.enabled) {
-    return {
-      width: safeInt(overrideWidth ?? (mobile.customWidth ?? mobile.width), DEFAULT_WIDTH),
-      height: safeInt(overrideHeight ?? (mobile.customHeight ?? mobile.height), DEFAULT_HEIGHT),
-    };
-  }
+  const size = isMobile ? MOBILE_SIZE : DESKTOP_SIZE;
+  const scale = isScrolled ? 0.85 : 1;
 
-  const mode = logo.displayMode ?? "auto";
-  const w = safeInt(overrideWidth ?? logo.width, DEFAULT_WIDTH);
-  const h = safeInt(overrideHeight ?? logo.height, DEFAULT_HEIGHT);
-  const mw = safeInt(overrideWidth ?? logo.maxWidth, DEFAULT_WIDTH);
-  const mh = safeInt(overrideHeight ?? logo.maxHeight, DEFAULT_HEIGHT);
-
-  switch (mode) {
-    case "fixed-width":
-    case "fixed-height":
-    case "fixed-both":
-      return { width: w, height: h };
-    default:
-      return { width: isMobile ? 150 : mw, height: mh };
-  }
+  return {
+    width: Math.round(size * scale),
+    height: Math.round(size * scale),
+  };
 }
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
@@ -130,8 +84,8 @@ function LogoSkeleton({ className }: { className?: string }) {
   return (
     <div className={`flex items-center ${className ?? ""}`}>
       <div
-        className="animate-pulse bg-gray-200 rounded"
-        style={{ width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT}}
+        className="animate-pulse bg-gray-200 rounded-full"
+        style={{ width: DESKTOP_SIZE, height: DESKTOP_SIZE }}
         aria-hidden
       />
     </div>
@@ -165,17 +119,14 @@ export default function Logo({
   className = "",
   isMobile = false,
   isScrolled = false,
-  isDarkBackground = false,
-  theme,
-  width,
-  height,
+  isDarkBackground: _isDarkBackground = false,
+  theme: _theme,
 }: LogoProps) {
   const [logoData, setLogoData] = useState<LogoData | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
   const isMounted = useRef(true);
 
-  // ── Fetch logo data ──────────────────────────────────────────────────────────
   const fetchLogoData = useCallback(async () => {
     try {
       const res = await fetch("/api/logo", {
@@ -207,50 +158,19 @@ export default function Logo({
     };
   }, [fetchLogoData]);
 
-  // ── Render: Loading ──────────────────────────────────────────────────────────
   if (loading) return <LogoSkeleton className={className} />;
 
-  // ── Render: No data fallback ─────────────────────────────────────────────────
   if (!logoData?.logo?.imageUrl) {
-    return (
-      <TextLogo
-        siteName="VinhPhat"
-        tagline="Printing"
-        className={className}
-      />
-    );
+    return <TextLogo siteName="VinhPhat" tagline="Printing" className={className} />;
   }
 
-  // ── Resolve image URL ────────────────────────────────────────────────────────
   const useMobileLogo =
     isMobile && logoData.logoMobile?.enabled && !!logoData.logoMobile?.imageUrl;
 
-  const resolvedTheme: "light" | "dark" = theme ?? (isDarkBackground ? "dark" : "light");
+  const logoImageUrl = useMobileLogo
+    ? logoData.logoMobile.imageUrl || logoData.logo.imageUrl
+    : logoData.logo.imageUrl;
 
-  const resolveUrl = (): string => {
-    if (useMobileLogo) {
-      if (resolvedTheme === "dark") {
-        return (
-          logoData.logoMobile.imageUrlDark ||
-          logoData.logoMobile.imageUrl ||
-          logoData.logo.imageUrl
-        );
-      }
-      return (
-        logoData.logoMobile.imageUrl ||
-        logoData.logo.imageUrl
-      );
-    }
-
-    if (resolvedTheme === "dark") {
-      return logoData.logo.imageUrlDark || logoData.logo.imageUrl;
-    }
-    return logoData.logo.imageUrl;
-  };
-
-  const logoImageUrl = resolveUrl();
-
-  // ── Render: Image error fallback ─────────────────────────────────────────────
   if (!logoImageUrl || imageError) {
     return (
       <TextLogo
@@ -261,23 +181,9 @@ export default function Logo({
     );
   }
 
-  const containerStyle = getContainerStyle(
-    logoData.logo,
-    logoData.logoMobile,
-    isMobile,
-    width,
-    height
-  );
+  const containerStyle = getContainerStyle(isMobile, isScrolled);
+  const { width: finalWidth, height: finalHeight } = getImageDimensions(isMobile, isScrolled);
 
-  const { width: imageWidth, height: imageHeight } = getImageDimensions(
-    logoData.logo,
-    logoData.logoMobile,
-    isMobile,
-    width,
-    height
-  );
-
-  // ── Render: Image ────────────────────────────────────────────────────────────
   return (
     <Link
       href="/"
@@ -288,12 +194,12 @@ export default function Logo({
         <Image
           src={logoImageUrl}
           alt={logoData.logo.alt ?? logoData.siteInfo?.siteName ?? "Logo"}
-          width={imageWidth}
-          height={imageHeight}
-          sizes={`${imageWidth}px`}
+          width={finalWidth}
+          height={finalHeight}
+          sizes={isMobile ? "20vw" : "10vw"}
           priority
           quality={90}
-          className="object-contain"
+          className="object-contain w-full h-full"
           onError={() => setImageError(true)}
         />
       </div>

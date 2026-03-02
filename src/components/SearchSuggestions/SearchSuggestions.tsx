@@ -136,7 +136,7 @@ const SearchSuggestions: React.FC<SearchSuggestionsProps> = ({
             ))}
             <div className="border-t border-gray-200 dark:border-gray-600 mt-2 pt-2">
               <Link
-                href={`/tim-kiem?q=${encodeURIComponent(searchValue)}`}
+                href={`/san-pham?search=${encodeURIComponent(searchValue)}`}
                 className="flex items-center justify-center w-full px-3 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 onClick={() => {
                   setIsOpen(false);

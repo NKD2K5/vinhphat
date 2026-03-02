@@ -11,9 +11,6 @@ import { addToRecentlyViewed } from '@/utils/recentlyViewed';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { addItemToCart } from '@/utils/cart';
 
-const PhanDauTrang = dynamic(() => import('../../components/PhanDauTrang/PhanDauTrang'), { ssr: false });
-const Footer = dynamic(() => import('../../components/Footer/Footer'), { ssr: false });
-
 interface Product {
   id: string;
   slug: string;
@@ -172,9 +169,7 @@ export default function ProductDetailPage() {
   if (notFound || !product) {
     return (
       <>
-        <PhanDauTrang />
         <NotFoundProduct />
-        <Footer />
       </>
     );
   }
@@ -212,10 +207,8 @@ export default function ProductDetailPage() {
         <link rel="canonical" href={productUrl} />
       </Head>
       
-      <PhanDauTrang />
-      
       {/* Breadcrumb */}
-      <div className="bg-gray-100 dark:bg-gray-800 py-4">
+      <div className="bg-gray-100 dark:bg-gray-800 py-4 pt-20">
         <div className="container mx-auto px-4">
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Link href="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -677,7 +670,6 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      <Footer />
     </>
   );
 }

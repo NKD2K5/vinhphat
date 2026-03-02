@@ -5,9 +5,13 @@ const PAYLOAD_URL = process.env.NEXT_PUBLIC_PAYLOAD_URL || 'http://localhost:300
 export async function GET() {
   try {
     // ContactCTA is now a global, not a collection
-    const response = await fetch(`${PAYLOAD_URL}/api/globals/contact-cta`, {
+    const timestamp = Date.now();
+    const response = await fetch(`${PAYLOAD_URL}/api/globals/contact-cta?t=${timestamp}`, {
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
       },
       cache: 'no-store',
     });
